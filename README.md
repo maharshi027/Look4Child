@@ -2,25 +2,6 @@
 
 An NGO platform dedicated to protecting children and providing educational knowledge to help underprivileged girls. This application includes donation management, payment integration, and certificate generation.
 
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [What's New - JWT Authentication](#whats-new---jwt-authentication)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [Environment Setup](#environment-setup)
-- [Running the Project](#running-the-project)
-- [API Endpoints](#api-endpoints)
-- [JWT Authentication Guide](#-jwt-authentication-guide)
-- [Features](#features)
-- [Security Best Practices](#-security-best-practices)
-- [Troubleshooting](#-troubleshooting)
-- [Additional Resources](#-additional-resources)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## 🎯 Overview
 
 Dream Girl Foundation is a full-stack web application that enables:
@@ -115,15 +96,6 @@ Dream Girl Foundation/
 └── README.md                         # This file
 ```
 
-## 🚀 Installation
-
-### 1. Clone the Repository
-
-```bash
-git clone <repository-url>
-cd "Dream Girl Foundation"
-```
-
 ### 2. Backend Setup
 
 Navigate to the backend directory:
@@ -142,36 +114,6 @@ cd ../frontend
 npm install
 ```
 
-## ⚙️ Environment Setup
-
-### Backend Environment Variables
-
-Create a `.env` file in the `backend/` directory with the following variables:
-
-```env
-# MongoDB Connection
-MONGODB_URI=mongodb://127.0.0.1:27017/dreamgirl
-# Or use MongoDB Atlas:
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dreamgirl
-
-# Server Configuration
-PORT=5000
-NODE_ENV=development
-
-# Admin Authentication
-ADMIN_PASSWORD=&Harsh@2511
-
-# JWT Authentication (⚠️ CHANGE IN PRODUCTION!)
-JWT_ACCESS_TOKEN_SECRET=your_super_secret_access_token_key_change_this_in_production
-JWT_REFRESH_TOKEN_SECRET=your_super_secret_refresh_token_key_change_this_in_production
-JWT_ACCESS_TOKEN_EXPIRY=15m
-JWT_REFRESH_TOKEN_EXPIRY=7d
-
-# Razorpay Payment Gateway
-RAZORPAY_KEY_ID=your_razorpay_key_id_here
-RAZORPAY_KEY_SECRET=your_razorpay_key_secret_here
-```
-
 **⚠️ Important Security Notes:**
 
 - Never commit `.env` file to Git
@@ -182,15 +124,6 @@ RAZORPAY_KEY_SECRET=your_razorpay_key_secret_here
 - Use MongoDB Atlas for production databases
 - Use HTTPS only in production
 - Store tokens in httpOnly cookies in production (not localStorage)
-
-### Get Razorpay Credentials
-
-1. Sign up at [Razorpay](https://razorpay.com/)
-2. Navigate to Settings → API Keys
-3. Copy your Key ID and Key Secret
-4. Add them to your `.env` file
-
-## 🏃 Running the Project
 
 ### Backend Server
 
@@ -233,39 +166,9 @@ Body: { password: "string" }
 Response: { success: boolean, message: string }
 ```
 
-### Donation Routes (Require JWT Token)
+### Donation Routes
 
-```
-POST /api/donations/initiate-online
-Headers: { Authorization: "Bearer <accessToken>" }
-Body: { name, email, phone, amount }
-Response: { success, order, donationId, isMock }
-
-POST /api/donations/verify-online
-Headers: { Authorization: "Bearer <accessToken>" }
-Body: { razorpay_order_id, razorpay_payment_id, razorpay_signature }
-Response: { success, message, donationId }
-
-POST /api/donations/record-cash
-Headers: { Authorization: "Bearer <accessToken>" }
-Body: { name, email, phone, amount }
-Response: { success, message, donationId }
-
-GET /api/donations/all-records
-Headers: { Authorization: "Bearer <accessToken>" }
-Response: [{ id, donorName, amount, paymentMode, paymentStatus, ... }]
-
-PUT /api/donations/update/:id
-Headers: { Authorization: "Bearer <accessToken>" }
-Body: { donorName, donorEmail, donorPhone, amount, paymentMode, paymentStatus }
-Response: { success, message, donation }
-
-DELETE /api/donations/delete/:id
-Headers: { Authorization: "Bearer <accessToken>" }
-Response: { success, message }
-```
-
-### Certificate Routes (Require JWT Token)
+### Certificate Generate Routes
 
 ```
 GET /api/certificate/download-certificate/:id
@@ -280,7 +183,7 @@ Note: Only works for donations with paymentStatus = "SUCCESS"
 
 1. **Login**: Send admin password to `/api/auth/login`
    - Backend verifies password
-   - Backend returns `accessToken` (15m) and `refreshToken` (7d)
+   - Backend returns `accessToken` and `refreshToken`
    - Frontend stores both tokens in localStorage
 
 2. **Authenticated Requests**: Include token in Authorization header
@@ -290,7 +193,7 @@ Note: Only works for donations with paymentStatus = "SUCCESS"
 
 3. **Token Expiry**: Access token expires after 15 minutes
    - Frontend detects 401 Unauthorized response
-   - Axios interceptor automatically calls `/api/auth/refresh-token`
+   - Axios interceptor automatically calls `/api/auth/.....`
    - Backend returns new access token
    - Axios retries original request with new token
    - **No manual intervention needed!**
