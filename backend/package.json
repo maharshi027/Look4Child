@@ -1,0 +1,27 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "an NGO for childrens to protect them and education knowlesge for help.",
+  "license": "ISC",
+  "author": "Harshit",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "axios": "^1.16.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^9.6.2",
+    "multer": "1.4.4-lts.1",
+    "pdfkit": "^0.18.0",
+    "razorpay": "^2.9.6"
+  }
+}
