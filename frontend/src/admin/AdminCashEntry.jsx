@@ -16,7 +16,7 @@ export default function AdminCashEntry({ onRecordAdded }) {
     try {
       const { data } = await axios.post(
         "/api/donations/record-cash",
-        cashRecord
+        cashRecord,
       );
       if (data.success) {
         alert("In-Hand Cash Donation Logged Successfully!");
@@ -28,14 +28,17 @@ export default function AdminCashEntry({ onRecordAdded }) {
           amount: "",
         });
         e.target.reset();
-        
+
         // Trigger list refresh in parent dashboard
         if (onRecordAdded) {
           onRecordAdded();
         }
 
         // Open certificate in new tab instantly
-        window.open(`/api/certificate/download-certificate/${data.donationId}`, '_blank');
+        window.open(
+          `${import.meta.env.VITE_APP_URL}/api/certificate/download-certificate/${data.donationId}`,
+          "_blank",
+        );
       }
     } catch (err) {
       console.error(err);
@@ -49,7 +52,7 @@ export default function AdminCashEntry({ onRecordAdded }) {
     <div className="cms-cash-card fade-in">
       <h3>Record Cash Collection</h3>
       <p>Log offline in-hand donations and issue instant tax receipts.</p>
-      
+
       <form onSubmit={handleManualSubmit}>
         <div className="form-group">
           <label>Donor's Full Name</label>

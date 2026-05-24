@@ -38,7 +38,11 @@ export default function DonarList() {
   }, []);
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to permanently delete this donor record?")) {
+    if (
+      window.confirm(
+        "Are you sure you want to permanently delete this donor record?",
+      )
+    ) {
       try {
         await axios.delete(`/api/donations/delete/${id}`);
         alert("Record deleted successfully.");
@@ -67,7 +71,7 @@ export default function DonarList() {
     try {
       const { data } = await axios.put(
         `/api/donations/update/${editingRecord._id}`,
-        editForm
+        editForm,
       );
       if (data.success) {
         alert("Record updated successfully!");
@@ -81,11 +85,17 @@ export default function DonarList() {
   };
 
   // Metrics calculations (Only on successful transactions)
-  const successfulDonations = donations.filter((d) => d.paymentStatus === "SUCCESS");
-  const totalRaised = successfulDonations.reduce((acc, curr) => acc + curr.amount, 0);
+  const successfulDonations = donations.filter(
+    (d) => d.paymentStatus === "SUCCESS",
+  );
+  const totalRaised = successfulDonations.reduce(
+    (acc, curr) => acc + curr.amount,
+    0,
+  );
   const numDonors = successfulDonations.length;
-  const averageDonation = numDonors > 0 ? Math.round(totalRaised / numDonors) : 0;
-  
+  const averageDonation =
+    numDonors > 0 ? Math.round(totalRaised / numDonors) : 0;
+
   const cashTotal = successfulDonations
     .filter((d) => d.paymentMode === "CASH")
     .reduce((acc, curr) => acc + curr.amount, 0);
@@ -100,9 +110,10 @@ export default function DonarList() {
         d.donorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         d.donorEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (d.donorPhone && d.donorPhone.includes(searchTerm));
-      
+
       const matchMode = filterMode === "ALL" || d.paymentMode === filterMode;
-      const matchStatus = filterStatus === "ALL" || d.paymentStatus === filterStatus;
+      const matchStatus =
+        filterStatus === "ALL" || d.paymentStatus === filterStatus;
 
       return matchSearch && matchMode && matchStatus;
     })
@@ -120,7 +131,14 @@ export default function DonarList() {
     });
 
   if (loading && donations.length === 0) {
-    return <div className="cms-loading" style={{textAlign: "center", padding: "3rem"}}>Loading Donor Records Database...</div>;
+    return (
+      <div
+        className="cms-loading"
+        style={{ textAlign: "center", padding: "3rem" }}
+      >
+        Loading Donor Records Database...
+      </div>
+    );
   }
 
   return (
@@ -128,7 +146,10 @@ export default function DonarList() {
       {/* Metrics Section */}
       <div className="cms-metrics">
         <div className="metric-card">
-          <div className="metric-icon-bg" style={{ backgroundColor: "#ecfdf5", color: "#059669" }}>
+          <div
+            className="metric-icon-bg"
+            style={{ backgroundColor: "#ecfdf5", color: "#059669" }}
+          >
             🪙
           </div>
           <div className="metric-details">
@@ -137,14 +158,17 @@ export default function DonarList() {
               {new Intl.NumberFormat("en-IN", {
                 style: "currency",
                 currency: "INR",
-                maximumFractionDigits: 0
+                maximumFractionDigits: 0,
               }).format(totalRaised)}
             </h3>
           </div>
         </div>
 
         <div className="metric-card">
-          <div className="metric-icon-bg" style={{ backgroundColor: "#eff6ff", color: "#2563eb" }}>
+          <div
+            className="metric-icon-bg"
+            style={{ backgroundColor: "#eff6ff", color: "#2563eb" }}
+          >
             👥
           </div>
           <div className="metric-details">
@@ -154,7 +178,10 @@ export default function DonarList() {
         </div>
 
         <div className="metric-card">
-          <div className="metric-icon-bg" style={{ backgroundColor: "#fef3c7", color: "#d97706" }}>
+          <div
+            className="metric-icon-bg"
+            style={{ backgroundColor: "#fef3c7", color: "#d97706" }}
+          >
             📈
           </div>
           <div className="metric-details">
@@ -164,7 +191,10 @@ export default function DonarList() {
         </div>
 
         <div className="metric-card">
-          <div className="metric-icon-bg" style={{ backgroundColor: "#fdf2f8", color: "#db2777" }}>
+          <div
+            className="metric-icon-bg"
+            style={{ backgroundColor: "#fdf2f8", color: "#db2777" }}
+          >
             📊
           </div>
           <div className="metric-details">
@@ -188,7 +218,17 @@ export default function DonarList() {
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{ paddingRight: "2.5rem" }}
             />
-            <span style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-light)" }}>🔍</span>
+            <span
+              style={{
+                position: "absolute",
+                right: "12px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "var(--text-light)",
+              }}
+            >
+              🔍
+            </span>
           </div>
 
           <select
@@ -229,7 +269,9 @@ export default function DonarList() {
             <div className="cms-empty-state">
               <div className="cms-empty-icon">📁</div>
               <h3>No donor records match your parameters</h3>
-              <p>Try refining your search or log a cash entry on the right pane.</p>
+              <p>
+                Try refining your search or log a cash entry on the right pane.
+              </p>
             </div>
           ) : (
             <table className="cms-table">
@@ -248,11 +290,21 @@ export default function DonarList() {
                     <td>
                       <div className="donor-name-cell">{d.donorName}</div>
                       <div className="donor-subinfo">{d.donorEmail}</div>
-                      {d.donorPhone && <div className="donor-subinfo" style={{fontSize: '0.7rem'}}>📞 {d.donorPhone}</div>}
+                      {d.donorPhone && (
+                        <div
+                          className="donor-subinfo"
+                          style={{ fontSize: "0.7rem" }}
+                        >
+                          📞 {d.donorPhone}
+                        </div>
+                      )}
                     </td>
                     <td>
                       <div className="amount-cell">₹{d.amount}</div>
-                      <div className="donor-subinfo" style={{ fontSize: "0.75rem" }}>
+                      <div
+                        className="donor-subinfo"
+                        style={{ fontSize: "0.75rem" }}
+                      >
                         {new Date(d.createdAt).toLocaleDateString("en-IN", {
                           day: "numeric",
                           month: "short",
@@ -261,12 +313,16 @@ export default function DonarList() {
                       </div>
                     </td>
                     <td>
-                      <span className={`badge badge-${d.paymentMode.toLowerCase()}`}>
+                      <span
+                        className={`badge badge-${d.paymentMode.toLowerCase()}`}
+                      >
                         {d.paymentMode === "CASH" ? "💵 Cash" : "🌐 Online"}
                       </span>
                     </td>
                     <td>
-                      <span className={`badge badge-${d.paymentStatus.toLowerCase()}`}>
+                      <span
+                        className={`badge badge-${d.paymentStatus.toLowerCase()}`}
+                      >
                         {d.paymentStatus}
                       </span>
                     </td>
@@ -274,7 +330,7 @@ export default function DonarList() {
                       <div className="cms-actions">
                         {d.paymentStatus === "SUCCESS" ? (
                           <a
-                            href={`/api/certificate/download-certificate/${d._id}`}
+                            href={`${import.meta.env.VITE_APP_URL}/api/certificate/download-certificate/${d._id}`}
                             className="action-btn action-btn-print"
                             title="Download Certificate"
                             target="_blank"
@@ -283,7 +339,11 @@ export default function DonarList() {
                             🖨️
                           </a>
                         ) : (
-                          <button className="action-btn" style={{ opacity: 0.3, cursor: "not-allowed" }} disabled>
+                          <button
+                            className="action-btn"
+                            style={{ opacity: 0.3, cursor: "not-allowed" }}
+                            disabled
+                          >
                             🖨️
                           </button>
                         )}
@@ -317,7 +377,10 @@ export default function DonarList() {
           <div className="modal-content">
             <div className="modal-header">
               <h3>Edit Donor Record</h3>
-              <button className="modal-close-btn" onClick={() => setEditingRecord(null)}>
+              <button
+                className="modal-close-btn"
+                onClick={() => setEditingRecord(null)}
+              >
                 ×
               </button>
             </div>
@@ -328,7 +391,9 @@ export default function DonarList() {
                   type="text"
                   className="form-input"
                   value={editForm.donorName}
-                  onChange={(e) => setEditForm({ ...editForm, donorName: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, donorName: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -338,7 +403,9 @@ export default function DonarList() {
                   type="email"
                   className="form-input"
                   value={editForm.donorEmail}
-                  onChange={(e) => setEditForm({ ...editForm, donorEmail: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, donorEmail: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -348,7 +415,9 @@ export default function DonarList() {
                   type="text"
                   className="form-input"
                   value={editForm.donorPhone}
-                  onChange={(e) => setEditForm({ ...editForm, donorPhone: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, donorPhone: e.target.value })
+                  }
                 />
               </div>
               <div className="form-group">
@@ -357,17 +426,28 @@ export default function DonarList() {
                   type="number"
                   className="form-input"
                   value={editForm.amount}
-                  onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, amount: e.target.value })
+                  }
                   required
                 />
               </div>
-              <div className="form-group" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div
+                className="form-group"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "1rem",
+                }}
+              >
                 <div>
                   <label>Mode</label>
                   <select
                     className="form-input"
                     value={editForm.paymentMode}
-                    onChange={(e) => setEditForm({ ...editForm, paymentMode: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, paymentMode: e.target.value })
+                    }
                   >
                     <option value="CASH">CASH</option>
                     <option value="ONLINE">ONLINE</option>
@@ -378,7 +458,12 @@ export default function DonarList() {
                   <select
                     className="form-input"
                     value={editForm.paymentStatus}
-                    onChange={(e) => setEditForm({ ...editForm, paymentStatus: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({
+                        ...editForm,
+                        paymentStatus: e.target.value,
+                      })
+                    }
                   >
                     <option value="SUCCESS">SUCCESS</option>
                     <option value="PENDING">PENDING</option>
@@ -387,7 +472,11 @@ export default function DonarList() {
                 </div>
               </div>
               <div className="modal-buttons">
-                <button type="button" className="btn btn-secondary" onClick={() => setEditingRecord(null)}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setEditingRecord(null)}
+                >
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary">

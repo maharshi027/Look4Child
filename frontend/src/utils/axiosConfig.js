@@ -1,11 +1,9 @@
 import axios from "axios";
 
-// Configure axios default base URL
-axios.defaults.baseURL = "";
+// Set base URL from environment variable
+axios.defaults.baseURL =
+  import.meta.env.VITE_APP_URL || "http://localhost:5000";
 
-/**
- * Setup JWT token interceptors for automatic token injection and refresh
- */
 export const setupAxiosInterceptors = () => {
   // Request interceptor: Add JWT token to all requests
   axios.interceptors.request.use(

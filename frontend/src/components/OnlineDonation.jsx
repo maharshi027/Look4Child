@@ -35,7 +35,7 @@ export default function OnlineDonation() {
       // 1. Create order
       const { data } = await axios.post(
         "/api/donations/initiate-online",
-        formData
+        formData,
       );
 
       if (data.success) {
@@ -59,11 +59,16 @@ export default function OnlineDonation() {
               try {
                 const verifyRes = await axios.post(
                   "/api/donations/verify-online",
-                  response
+                  response,
                 );
                 if (verifyRes.data.success) {
-                  alert("Donation Successful! Opening Tax Exemption Certificate...");
-                  window.open(`/api/certificate/download-certificate/${verifyRes.data.donationId}`, '_blank');
+                  alert(
+                    "Donation Successful! Opening Tax Exemption Certificate...",
+                  );
+                  window.open(
+                    `${import.meta.env.VITE_APP_URL}/api/certificate/download-certificate/${verifyRes.data.donationId}`,
+                    "_blank",
+                  );
                   // Reset form
                   setFormData({ name: "", email: "", phone: "", amount: "" });
                   setSelectedPreset(null);
@@ -86,7 +91,10 @@ export default function OnlineDonation() {
       }
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Failed to initiate payment gateway connection.");
+      alert(
+        error.response?.data?.message ||
+          "Failed to initiate payment gateway connection.",
+      );
     } finally {
       setLoading(false);
     }
@@ -107,19 +115,23 @@ export default function OnlineDonation() {
     try {
       const mockPayload = {
         razorpay_order_id: simulationData.order.id,
-        razorpay_payment_id: "pay_sim_" + Math.random().toString(36).substring(2, 10),
+        razorpay_payment_id:
+          "pay_sim_" + Math.random().toString(36).substring(2, 10),
         razorpay_signature: "mock_signature_approved",
       };
 
       const verifyRes = await axios.post(
         "/api/donations/verify-online",
-        mockPayload
+        mockPayload,
       );
 
       if (verifyRes.data.success) {
         alert("Simulated Donation Successful! Thank you for your support.");
         // Open PDF certificate download in new tab
-        window.open(`/api/certificate/download-certificate/${verifyRes.data.donationId}`, '_blank');
+        window.open(
+          `${import.meta.env.VITE_APP_URL}/api/certificate/download-certificate/${verifyRes.data.donationId}`,
+          "_blank",
+        );
         // Reset form
         setFormData({ name: "", email: "", phone: "", amount: "" });
         setSelectedPreset(null);
@@ -138,7 +150,8 @@ export default function OnlineDonation() {
       <form onSubmit={handlePaySubmit} className="donation-form fade-in">
         <h2>Make a Secure Contribution</h2>
         <p className="donation-form-subtitle">
-          Your donation helps us provide education, nutrition, and medical help to underprivileged girls.
+          Your donation helps us provide education, nutrition, and medical help
+          to underprivileged girls.
         </p>
 
         {/* Amount Chips Selection */}
@@ -186,7 +199,9 @@ export default function OnlineDonation() {
               className="form-input form-input-with-icon"
               placeholder="Enter full name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               required
             />
           </div>
@@ -203,7 +218,9 @@ export default function OnlineDonation() {
               className="form-input form-input-with-icon"
               placeholder="donor@example.com"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               required
             />
           </div>
@@ -220,13 +237,21 @@ export default function OnlineDonation() {
               className="form-input form-input-with-icon"
               placeholder="+91 XXXXX XXXXX"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
             />
           </div>
         </div>
 
-        <button type="submit" className="btn btn-donate-submit" disabled={loading}>
-          {loading ? "Processing Securely..." : `Donate ₹${formData.amount || "0"}`}
+        <button
+          type="submit"
+          className="btn btn-donate-submit"
+          disabled={loading}
+        >
+          {loading
+            ? "Processing Securely..."
+            : `Donate ₹${formData.amount || "0"}`}
         </button>
       </form>
 
@@ -238,33 +263,80 @@ export default function OnlineDonation() {
               <div className="simulation-banner-title">
                 <span>🛠️</span> Sandbox Mode (Simulation Active)
               </div>
-              <div>Razorpay credentials are not defined in the environment. We have triggered a mock payment sequence.</div>
+              <div>
+                Razorpay credentials are not defined in the environment. We have
+                triggered a mock payment sequence.
+              </div>
             </div>
 
             <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
               <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>💳</div>
-              <h3 style={{ fontSize: "1.25rem" }}>Simulated Checkout Gateway</h3>
+              <h3 style={{ fontSize: "1.25rem" }}>
+                Simulated Checkout Gateway
+              </h3>
               <p style={{ fontSize: "0.85rem", color: "var(--text-light)" }}>
                 Testing secure payment execution loop for Dream Girl Foundation.
               </p>
             </div>
 
-            <div style={{ backgroundColor: "var(--light-gray)", padding: "1rem", borderRadius: "8px", marginBottom: "1.5rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem", marginBottom: "0.5rem" }}>
+            <div
+              style={{
+                backgroundColor: "var(--light-gray)",
+                padding: "1rem",
+                borderRadius: "8px",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: "0.9rem",
+                  marginBottom: "0.5rem",
+                }}
+              >
                 <span>Order ID:</span>
-                <strong style={{ fontSize: "0.75rem", fontFamily: "monospace" }}>{simulationData.order.id}</strong>
+                <strong
+                  style={{ fontSize: "0.75rem", fontFamily: "monospace" }}
+                >
+                  {simulationData.order.id}
+                </strong>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem", marginBottom: "0.5rem" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: "0.9rem",
+                  marginBottom: "0.5rem",
+                }}
+              >
                 <span>Recipient:</span>
                 <strong>Dream Girl Foundation</strong>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem", borderTop: "1px solid var(--border)", paddingTop: "0.5rem", marginTop: "0.5rem" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: "0.9rem",
+                  borderTop: "1px solid var(--border)",
+                  paddingTop: "0.5rem",
+                  marginTop: "0.5rem",
+                }}
+              >
                 <span>Total Amount:</span>
-                <strong style={{ color: "var(--primary)" }}>₹{simulationData.order.amount / 100}</strong>
+                <strong style={{ color: "var(--primary)" }}>
+                  ₹{simulationData.order.amount / 100}
+                </strong>
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "1rem",
+              }}
+            >
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -277,7 +349,10 @@ export default function OnlineDonation() {
                 type="button"
                 className="btn btn-primary"
                 onClick={() => handleSimulatePayment("success")}
-                style={{ justifyContent: "center", backgroundColor: "var(--success)" }}
+                style={{
+                  justifyContent: "center",
+                  backgroundColor: "var(--success)",
+                }}
               >
                 Approve Payment
               </button>
