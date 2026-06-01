@@ -31,7 +31,7 @@ body {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: #f3f4f6;
-  overflow: visible;
+  overflow: hidden;
 }
 
 /* Dashboard Wrapper */
