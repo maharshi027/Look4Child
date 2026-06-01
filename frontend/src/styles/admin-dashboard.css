@@ -260,9 +260,9 @@ body {
 
 /* Forms - Generic Styling */
 .form-group-modern {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
-
+*/
 .input-wrapper {
   position: relative;
   display: block;
@@ -289,7 +289,7 @@ body {
 
 .form-input-modern {
   width: 100%;
-  padding: 11px 36px 11px 38px;
+  padding: 10px 12px 11px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 0.95rem;
@@ -301,13 +301,13 @@ body {
 }
 
 .form-input-modern::placeholder {
-  color: #9ca3af;
+  color: #9bb2c0;
 }
 
 .form-input-modern:focus {
   outline: none;
   border-color: var(--primary-color);
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   box-shadow: 0 0 0 3px rgba(59, 90, 138, 0.08);
 }
 
