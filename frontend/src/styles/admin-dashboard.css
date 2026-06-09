@@ -208,7 +208,7 @@ body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 1.5rem 1.5rem;
+  padding: 0;
   background-color: #f3f4f6;
   width: 100%;
   max-height: calc(100vh - var(--header-height));

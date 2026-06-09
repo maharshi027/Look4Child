@@ -104,7 +104,7 @@ function App() {
       </header>
 
       {/* Main Container */}
-      <main>
+      <main className={activeTab === "admin" ? "admin-fullpage" : ""}>
         {activeTab === "home" && (
           <div className="fade-in">
             {/* Hero Banner */}
@@ -425,7 +425,7 @@ function App() {
         )}
 
         {activeTab === "admin" && (
-          <div className="fade-in">
+          <div className="fade-in admin-tab-wrap">
             {!isAdminLoggedIn ? (
               <AdminLogin onLoginSuccess={handleLoginSuccess} />
             ) : (
@@ -435,7 +435,9 @@ function App() {
         )}
       </main>
 
-      <Footer onNav={(tab) => setActiveTab(tab)} />
+      {!window?.location?.pathname?.includes("/admin") && (
+        <Footer onNav={(tab) => setActiveTab(tab)} />
+      )}
     </div>
   );
 }

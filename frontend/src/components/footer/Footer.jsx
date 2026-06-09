@@ -1,6 +1,13 @@
 import "./footer.css";
 
 export default function Footer({ onNav }) {
+  // Hide footer on admin dashboard to keep admin full-page
+  const isAdmin =
+    typeof window !== "undefined" &&
+    window.location.pathname.includes("/admin");
+
+  if (isAdmin) return null;
+
   return (
     <footer className="site-footer">
       <div className="footer-grid">
