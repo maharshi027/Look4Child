@@ -1256,3 +1256,194 @@ main.admin-fullpage {
 .action-btn-green {
   background-color: #28a745 !important;
 }
+
+/* ============================================================================
+   Responsive Utilities & Overrides for Mobile Layouts
+   ============================================================================ */
+
+/* Work Tab Styles */
+.work-card-list {
+  max-width: 850px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.work-card {
+  display: flex;
+  gap: 2rem;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.work-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.work-card-icon {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+
+/* Tax Badge Styles */
+.tax-badge {
+  background: #f0fdf4;
+  border: 1px dashed #10b981;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.tax-badge-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.tax-badge-text h4 {
+  color: #065f46;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.tax-badge-text p {
+  color: #374151;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0 !important;
+}
+
+/* Hero Backdrop Gradient Card Styles */
+.hero-backdrop-gradient {
+  width: 100%;
+  height: 380px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #a7f3d0, #0284c7, #4f46e5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel-accent {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+.hero-gradient-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-gradient-emoji {
+  font-size: 5.5rem;
+  margin-bottom: 1rem;
+  display: block;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+}
+
+.hero-backdrop-gradient h3 {
+  color: white;
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.hero-backdrop-gradient p {
+  color: #e0f2fe;
+  font-size: 0.95rem;
+  max-width: 360px;
+  margin: 0.75rem auto 0 auto;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Extra responsiveness rules */
+@media (max-width: 768px) {
+  .amount-selector {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-backdrop-gradient {
+    height: 320px;
+    padding: 1.5rem;
+  }
+  .hero-gradient-emoji {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+  }
+  .hero-backdrop-gradient h3 {
+    font-size: 1.5rem;
+  }
+  .hero-backdrop-gradient p {
+    font-size: 0.85rem;
+  }
+  .hero-badge {
+    left: 1rem !important;
+    bottom: 1rem !important;
+  }
+  .work-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  .compact-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .compact-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 0.75rem;
+  }
+  .nav-btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+  }
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  .hero-buttons .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .amount-selector {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .tax-badge {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  .hero-content h2 {
+    font-size: 2.25rem !important;
+  }
+}

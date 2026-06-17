@@ -37,6 +37,13 @@ export default function AdminDashboard({ onLogout }) {
       <aside className={`admin-sidebar ${sidebarOpen ? "open" : "closed"}`}>
         <div className="sidebar-header">
           <h2 className="sidebar-title">L4C Foundation CMS</h2>
+          <button
+            className="sidebar-close-btn"
+            onClick={() => setSidebarOpen(false)}
+            title="Close sidebar"
+          >
+            ×
+          </button>
         </div>
         <nav className="sidebar-nav">
           <button

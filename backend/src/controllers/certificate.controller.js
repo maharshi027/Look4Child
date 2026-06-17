@@ -247,21 +247,12 @@ export const downloadCertificate = async (req, res) => {
       .fillColor("#4B5563")
       .text("For LOOK FOR CHILD FOUNDATION", width - 260, footerY, { align: "center", width: 200 });
 
-    doc.y = footerY + 28;
-    doc
-      .font("Times-BoldItalic")
-      .fontSize(16)
-      .fillColor("#1E3A8A")
-      .text("M. Lal", width - 260, footerY + 28, { align: "center", width: 200 });
-
     doc.y = footerY + 54;
     doc
       .font("Times-Roman")
-      .fontSize(8)
+      .fontSize(8.5)
       .fillColor("#4B5563")
-      .text("President  Gen. Secretary  Treasurer", width - 260, footerY + 54, { align: "center", width: 200 });
-      
-    doc.fontSize(7).text("[SIGNATURE]", { align: "center", width: 200 });
+      .text("NGO President / Gen. Secretary", width - 260, footerY + 54, { align: "center", width: 200 });
 
     // End Document stream
     doc.end();

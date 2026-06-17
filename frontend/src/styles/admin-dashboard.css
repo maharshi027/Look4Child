@@ -347,3 +347,27 @@ tbody tr:hover {
     padding: 1rem;
   }
 }
+
+/* Close button for sidebar on mobile */
+.sidebar-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .sidebar-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 1.5rem 1rem !important;
+  }
+  .sidebar-close-btn {
+    display: block !important;
+  }
+}

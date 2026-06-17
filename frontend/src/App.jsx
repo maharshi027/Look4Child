@@ -60,7 +60,7 @@ function App() {
           <a href="#" className="logo" onClick={() => setActiveTab("home")}>
             <div className="logo-icon">🧸</div>
             <div className="logo-text">
-              <h1>Look For Child Foundation</h1>
+              <h1>Look4Child Foundation</h1>
               <p>For Children's Protection, Education & Care</p>
             </div>
           </a>
@@ -133,57 +133,15 @@ function App() {
                 </div>
               </div>
               <div className="hero-image-container">
-                <div
-                  className="hero-backdrop-gradient"
-                  style={{
-                    width: "100%",
-                    height: "380px",
-                    borderRadius: "16px",
-                    background: "linear-gradient(135deg, #a7f3d0, #0284c7, #4f46e5)",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "white",
-                    padding: "2rem",
-                    textAlign: "center",
-                    boxShadow: "var(--shadow-xl)",
-                    position: "relative",
-                    overflow: "hidden"
-                  }}
-                >
-                  <div className="glass-panel-accent" style={{
-                    position: "absolute",
-                    inset: "0",
-                    background: "rgba(255, 255, 255, 0.05)",
-                    backdropFilter: "blur(4px)",
-                    zIndex: 1
-                  }}></div>
+                <div className="hero-backdrop-gradient">
+                  <div className="glass-panel-accent"></div>
                   
-                  <div style={{ position: "relative", zIndex: 2 }}>
-                    <span style={{ fontSize: "5.5rem", marginBottom: "1rem", display: "block", filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.15))" }}>
+                  <div className="hero-gradient-content">
+                    <span className="hero-gradient-emoji">
                       📚🎒👦
                     </span>
-                    <h3
-                      style={{
-                        color: "white",
-                        fontSize: "1.85rem",
-                        fontWeight: "800",
-                        letterSpacing: "0.5px",
-                        textShadow: "0 2px 4px rgba(0,0,0,0.2)"
-                      }}
-                    >
-                      Look For Child Center
-                    </h3>
-                    <p
-                      style={{
-                        color: "#e0f2fe",
-                        fontSize: "0.95rem",
-                        maxWidth: "360px",
-                        margin: "0.75rem auto 0 auto",
-                        textShadow: "0 1px 2px rgba(0,0,0,0.2)"
-                      }}
-                    >
+                    <h3>Look For Child Center</h3>
+                    <p>
                       Creating safe, high-quality learning environments that nurture ambition,
                       nutrition, and character.
                     </p>
@@ -310,75 +268,34 @@ function App() {
                 We collaborate directly with rural villages and slum communities to break cycles of poverty.
               </p>
             </div>
-            <div
-              style={{
-                maxWidth: "850px",
-                margin: "0 auto",
-                display: "flex",
-                flexDirection: "column",
-                gap: "2rem",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  gap: "2rem",
-                  backgroundColor: "white",
-                  padding: "2rem",
-                  borderRadius: "16px",
-                  border: "1px solid var(--border)",
-                  alignItems: "center",
-                  boxShadow: "var(--shadow-sm)"
-                }}
-              >
-                <span style={{ fontSize: "3.5rem" }}>🎒</span>
+            <div className="work-card-list">
+              <div className="work-card">
+                <span className="work-card-icon">🎒</span>
                 <div>
-                  <h3 style={{ marginBottom: "0.5rem" }}>Non-Formal Education Hubs</h3>
-                  <p style={{ color: "var(--text-main)", fontSize: "0.95rem" }}>
+                  <h3>Non-Formal Education Hubs</h3>
+                  <p>
                     We run transitional classrooms for dropout children and child laborers, providing them 
                     accelerated learning before main school integration.
                   </p>
                 </div>
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  gap: "2rem",
-                  backgroundColor: "white",
-                  padding: "2rem",
-                  borderRadius: "16px",
-                  border: "1px solid var(--border)",
-                  alignItems: "center",
-                  boxShadow: "var(--shadow-sm)"
-                }}
-              >
-                <span style={{ fontSize: "3.5rem" }}>💻</span>
+              <div className="work-card">
+                <span className="work-card-icon">💻</span>
                 <div>
-                  <h3 style={{ marginBottom: "0.5rem" }}>Digital Literacy Programs</h3>
-                  <p style={{ color: "var(--text-main)", fontSize: "0.95rem" }}>
+                  <h3>Digital Literacy Programs</h3>
+                  <p>
                     Educating children in essential computer operations, programming bases, documents, and secure 
                     internet research to bridge the digital divide.
                   </p>
                 </div>
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  gap: "2rem",
-                  backgroundColor: "white",
-                  padding: "2rem",
-                  borderRadius: "16px",
-                  border: "1px solid var(--border)",
-                  alignItems: "center",
-                  boxShadow: "var(--shadow-sm)"
-                }}
-              >
-                <span style={{ fontSize: "3.5rem" }}>🎨</span>
+              <div className="work-card">
+                <span className="work-card-icon">🎨</span>
                 <div>
-                  <h3 style={{ marginBottom: "0.5rem" }}>Creative Arts & Skill Workshops</h3>
-                  <p style={{ color: "var(--text-main)", fontSize: "0.95rem" }}>
+                  <h3>Creative Arts & Skill Workshops</h3>
+                  <p>
                     Fostering holistic growth with painting, crafts, coding bootcamps, and sports activities 
                     promoting teamwork, focus, and critical thinking.
                   </p>
@@ -410,11 +327,11 @@ function App() {
                   <span className="info-bullet-icon">✓</span> Instant Tax Certificates & Transaction Receipts
                 </li>
               </ul>
-              <div className="tax-badge" style={{ background: "#f0fdf4", border: "1px dashed #10b981", borderRadius: "12px", padding: "1.25rem", display: "flex", gap: "1rem", alignItems: "center" }}>
-                <span className="tax-badge-icon" style={{ fontSize: "2rem" }}>🛡️</span>
+              <div className="tax-badge">
+                <span className="tax-badge-icon">🛡️</span>
                 <div className="tax-badge-text">
-                  <h4 style={{ color: "#065f46", fontSize: "1rem", fontWeight: "700" }}>Government Registered Tax Benefits</h4>
-                  <p style={{ color: "#374151", fontSize: "0.85rem", marginTop: "0.25rem" }}>
+                  <h4>Government Registered Tax Benefits</h4>
+                  <p>
                     Donations qualify for 50% tax deductions under Sec 80G of the Income Tax Act. 
                     PAN: **AAAAL4939Q**.
                   </p>
