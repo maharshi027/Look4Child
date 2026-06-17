@@ -140,7 +140,7 @@ function App() {
                     <span className="hero-gradient-emoji">
                       📚🎒👦
                     </span>
-                    <h3>Look For Child Center</h3>
+                    <h3>Look4Child Center</h3>
                     <p>
                       Creating safe, high-quality learning environments that nurture ambition,
                       nutrition, and character.
@@ -310,7 +310,7 @@ function App() {
             <div className="donation-info">
               <h2>Your Support Changes Everything</h2>
               <p>
-                Look For Child Foundation is a registered NGO under Societies Registration Act. All contributions 
+                Look4Child Foundation is a registered NGO under Societies Registration Act. All contributions 
                 go directly towards child health programs, coaching resources, nutrition, and safety networks.
               </p>
               <ul className="info-bullet-list">
