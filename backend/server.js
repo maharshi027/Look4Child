@@ -34,10 +34,8 @@ app.use(upload.none());
 
 // Request logging middleware
 app.use((req, res, next) => {
-  console.log(
-    `${req.method} ${req.path} - Content-Type: ${req.headers["content-type"]}`,
-  );
-  console.log(`Body:`, req.body);
+  // Avoid printing request bodies (donations/payment data)
+  console.log(`${req.method} ${req.path}`);
   next();
 });
 

@@ -1,6 +1,51 @@
 import PDFDocument from "pdfkit";
 import Donation from "../models/donation.models.js";
 
+// Helper to format date as DD-MM-YYYY (e.g. 10-06-2026)
+const getTableDateStr = (date) => {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
+// Helper to draw the double border and corner flourishes
+const drawCertificateBorders = (doc, width, height) => {
+  const crimsonRed = "#B91C1C";
+  
+  // 1. Outer thin border
+  doc
+    .lineWidth(2.5)
+    .strokeColor(crimsonRed)
+    .rect(30, 30, width - 60, height - 60)
+    .stroke();
+
+  // 2. Inner dashed border
+  doc
+    .lineWidth(1)
+    .strokeColor(crimsonRed)
+    .rect(38, 38, width - 76, height - 76)
+    .dash(2, { space: 2 })
+    .stroke();
+    
+  // Important: always reset dash style after drawing dashed lines
+  doc.undash();
+
+  // 3. Corner flourishes
+  const cornerLength = 20;
+  doc.lineWidth(1.5).strokeColor(crimsonRed);
+  
+  // Top Left
+  doc.moveTo(46, 46 + cornerLength).lineTo(46, 46).lineTo(46 + cornerLength, 46).stroke();
+  // Top Right
+  doc.moveTo(width - 46, 46 + cornerLength).lineTo(width - 46, 46).lineTo(width - 46 - cornerLength, 46).stroke();
+  // Bottom Left
+  doc.moveTo(46, height - 46 - cornerLength).lineTo(46, height - 46).lineTo(46 + cornerLength, height - 46).stroke();
+  // Bottom Right
+  doc.moveTo(width - 46, height - 46 - cornerLength).lineTo(width - 46, height - 46).lineTo(width - 46 - cornerLength, height - 46).stroke();
+};
+
 // Generate and stream the certificate PDF
 export const downloadCertificate = async (req, res) => {
   const { id } = req.params;
@@ -28,7 +73,7 @@ export const downloadCertificate = async (req, res) => {
       `attachment; filename=certificate_${donation._id}.pdf`,
     );
 
-    // Create a landscape A4 PDF document
+    // Create a landscape A4 PDF document (841.89 x 595.28 points)
     const doc = new PDFDocument({
       size: "A4",
       layout: "landscape",
@@ -41,236 +86,180 @@ export const downloadCertificate = async (req, res) => {
     const width = doc.page.width;
     const height = doc.page.height;
 
-    // --- DECORATIVE BORDERS ---
-    // Outer Gold/Bronze Border
-    doc.lineWidth(5);
-    doc.strokeColor("#D4AF37"); // Gold
-    doc.rect(20, 20, width - 40, height - 40).stroke();
+    // --- DRAW DECORATIVE BORDERS ---
+    drawCertificateBorders(doc, width, height);
 
-    // Inner Thin Dark Red Border
-    doc.lineWidth(1.5);
-    doc.strokeColor("#991B1B"); // Deep Red/Crimson
-    doc.rect(28, 28, width - 56, height - 56).stroke();
-
-    // Elegant Corner Flourishes (Lines)
-    const drawCorner = (x, y, xDir, yDir) => {
-      doc.lineWidth(1);
-      doc.strokeColor("#D4AF37");
-      doc
-        .moveTo(x, y + yDir * 30)
-        .lineTo(x, y)
-        .lineTo(x + xDir * 30, y)
-        .stroke();
-    };
-    drawCorner(35, 35, 1, 1);
-    drawCorner(width - 35, 35, -1, 1);
-    drawCorner(35, height - 35, 1, -1);
-    drawCorner(width - 35, height - 35, -1, -1);
-
-    // --- HEADER ---
-    doc.y = 55;
-
-    // Organization Sub-badge
+    // --- TOP REFERENCE & PAN ---
     doc
-      .fillColor("#991B1B")
-      .font("Helvetica-Bold")
-      .fontSize(12)
-      .text("DREAM GIRL FOUNDATION", { align: "center", characterSpacing: 2 });
+      .fillColor("#000000")
+      .font("Times-Roman")
+      .fontSize(9.5);
 
-    doc.moveDown(0.2);
+    doc.text("45147/2025-26/L4C", 54, 52, { continued: true });
+    doc.text("PAN : AAAAL4939Q", { align: "right" });
 
+    // --- LOGO (Look Child Foundation) ---
+    doc.y = 65;
     doc
-      .fillColor("#4B5563")
-      .font("Helvetica")
+      .font("Times-BoldItalic")
+      .fontSize(22)
+      .fillColor("#059669")
+      .text("Look ", { align: "center", continued: true });
+      
+    doc
+      .fillColor("#2563EB")
+      .text("child", { continued: true });
+      
+    doc
+      .font("Times-Roman")
       .fontSize(9)
-      .text("Registered NGO | Transforming Lives of Underprivileged Girls", {
-        align: "center",
-      });
+      .fillColor("#4B5563")
+      .text("\nFoundation", { align: "center" });
 
-    doc.moveDown(1.2);
-
-    // --- CERTIFICATE TITLE ---
+    // --- CERTIFICATE OF DONATION TITLE ---
+    doc.moveDown(1.5);
     doc
-      .fillColor("#1F2937")
       .font("Times-Bold")
-      .fontSize(34)
+      .fontSize(26)
+      .fillColor("#B91C1C")
       .text("CERTIFICATE OF DONATION", { align: "center" });
 
-    // Decorative Line under title
-    doc.lineWidth(1.5);
-    doc.strokeColor("#D4AF37");
+    // --- CERTIFICATION SUBTEXT ---
+    doc.moveDown(0.6);
     doc
-      .moveTo(width / 2 - 120, doc.y)
-      .lineTo(width / 2 + 120, doc.y)
-      .stroke();
-
-    doc.moveDown(1.5);
-
-    // --- BODY TEXT ---
-    doc
-      .fillColor("#374151")
       .font("Times-Italic")
-      .fontSize(16)
-      .text("This certificate is gratefully awarded to", { align: "center" });
+      .fontSize(13)
+      .fillColor("#4B5563")
+      .text("This is to certify that", { align: "center" });
 
-    doc.moveDown(0.8);
-
-    // Donor Name
+    // --- DIVIDER LINE WITH DIAMOND 1 ---
+    const lineY1 = doc.y + 12;
     doc
-      .fillColor("#991B1B")
+      .lineWidth(0.8)
+      .strokeColor("#B91C1C")
+      .moveTo(width / 2 - 160, lineY1)
+      .lineTo(width / 2 + 160, lineY1)
+      .stroke();
+    
+    doc
+      .fillColor("#B91C1C")
+      .rect(width / 2 - 4, lineY1 - 4, 8, 8)
+      .fill();
+
+    // --- DONOR NAME ---
+    doc.y = lineY1 + 18;
+    doc
       .font("Times-Bold")
-      .fontSize(28)
-      .text(donation.donorName, { align: "center" });
+      .fontSize(22)
+      .fillColor("#1F2937")
+      .text(donation.donorName.toUpperCase(), { align: "center" });
 
-    // Border line under name
-    doc.lineWidth(0.5);
-    doc.strokeColor("#D1D5DB");
+    // --- DIVIDER LINE WITH DIAMOND 2 ---
+    const lineY2 = doc.y + 12;
     doc
-      .moveTo(width / 2 - 180, doc.y)
-      .lineTo(width / 2 + 180, doc.y)
-      .stroke();
-
-    doc.moveDown(0.8);
-
-    // Contribution detail
-    const formattedAmount =
-      "Rs. " +
-      new Intl.NumberFormat("en-IN", {
-        maximumFractionDigits: 0,
-      }).format(donation.amount);
-
-    doc
-      .fillColor("#374151")
-      .font("Times-Italic")
-      .fontSize(15)
-      .text(`in deep appreciation of their generous contribution of`, {
-        align: "center",
-      });
-
-    doc.moveDown(0.4);
-
-    doc
-      .fillColor("#111827")
-      .font("Helvetica-Bold")
-      .fontSize(18)
-      .text(formattedAmount, { align: "center" });
-
-    doc.moveDown(0.4);
-
-    doc
-      .fillColor("#374151")
-      .font("Helvetica")
-      .fontSize(11)
-      .text(
-        `towards girls' education, nutrition, healthcare, and empowerment programs.`,
-        { align: "center" },
-      );
-
-    // --- FOOTER & SIGNATURES ---
-    const bottomY = height - 140;
-
-    // Left Signature: Authorized Official
-    doc
-      .moveTo(80, bottomY)
-      .lineTo(240, bottomY)
-      .strokeColor("#9CA3AF")
       .lineWidth(0.8)
+      .strokeColor("#B91C1C")
+      .moveTo(width / 2 - 160, lineY2)
+      .lineTo(width / 2 + 160, lineY2)
       .stroke();
-    // Simple signature-like script illustration using text
+    
     doc
-      .fillColor("#1E3A8A")
+      .fillColor("#B91C1C")
+      .rect(width / 2 - 4, lineY2 - 4, 8, 8)
+      .fill();
+
+    // --- DETAILS INPUT UNDERLINES GRID ---
+    doc.y = lineY2 + 25;
+    
+    // Line 1
+    doc
       .font("Times-Italic")
-      .fontSize(18)
-      .text("Aditya Sharma", 85, bottomY - 26, { width: 150, align: "center" });
+      .fontSize(12)
+      .fillColor("#374151");
+      
+    doc.text("Donated Rs. ", 80, lineY2 + 25, { continued: true });
+    doc.font("Times-Bold").text(`  ${donation.amount}/-  `, { underline: true, continued: true });
+    doc.font("Times-Italic").text("         PAN No. ", { underline: false, continued: true });
+    doc.font("Times-Bold").text(`  ${donation.panNo || "                    "}  `, { underline: true });
+
+    // Line 2
+    doc.y = lineY2 + 55;
+    doc.font("Times-Italic");
+    doc.text("For account of ", 80, lineY2 + 55, { continued: true });
+    doc.font("Times-Bold").text("  HEALTH CARE  ", { underline: true, continued: true });
+    doc.font("Times-Italic").text(" donated via ", { underline: false, continued: true });
+    
+    const paymentModeLabel = donation.paymentMode === "CASH" ? "CASH" : "NEFT/IMPS";
+    doc.font("Times-Bold").text(`  ${paymentModeLabel}  `, { underline: true, continued: true });
+    
+    doc.font("Times-Italic").text(" having reference no. ", { underline: false, continued: true });
+    const refNo = donation.paymentMode === "ONLINE" ? (donation.razorpayPaymentId || donation.transactionId) : "--NA--";
+    doc.font("Times-Bold").text(`  ${refNo}  `, { underline: true, continued: true });
+    
+    doc.font("Times-Italic").text(" drawn ", { underline: false, continued: true });
+    const drawnSource = donation.paymentMode === "ONLINE" ? "GOOGLE PAY" : "OFFICE CASH";
+    doc.font("Times-Bold").text(`  ${drawnSource}  `, { underline: true, continued: true });
+    
+    doc.font("Times-Italic").text(" dated ", { underline: false, continued: true });
+    doc.font("Times-Bold").text(`  ${getTableDateStr(donation.donationDate)}  `, { underline: true });
+
+    // --- 80G REGISTRATION & EXEMPTION INFO ---
+    doc.y = lineY2 + 100;
     doc
-      .fillColor("#4B5563")
-      .font("Helvetica-Bold")
+      .font("Times-Roman")
       .fontSize(9)
-      .text("AUTHORITY SIGNATORY", 80, bottomY + 5, {
-        width: 160,
-        align: "center",
-      })
-      .font("Helvetica")
+      .fillColor("#4B5563")
+      .text("Registered u/s 80G of Income Tax Act, Vide Reg. No. AAAAL4939QE20211", { align: "center" });
+
+    doc.moveDown(0.2);
+    doc
+      .font("Times-Bold")
+      .fontSize(10)
+      .fillColor("#B91C1C")
+      .text("Donation is Exempted u/s 80G of IT act, 1961", { align: "center" });
+
+    // --- BOTTOM CONTACTS (LEFT) ---
+    const footerY = height - 120;
+    
+    doc.y = footerY;
+    doc
+      .font("Times-Bold")
+      .fontSize(9.5)
+      .fillColor("#000000")
+      .text("Look For Child Foundation", 60, footerY);
+
+    doc
+      .font("Times-Roman")
       .fontSize(8)
-      .text("Dream Girl Foundation", 80, bottomY + 18, {
-        width: 160,
-        align: "center",
-      });
+      .fillColor("#4B5563")
+      .text("Address: Room No.1, Opp. Sarpanch Anant House,", { lineGap: 2 });
+    doc.text("         Tigra Village, Sec-57, Gurgaon", { lineGap: 2 });
+    doc.text("Phone  : +91 98998 18585", { lineGap: 2 });
+    doc.text("Email  : info@look4child.ngo");
 
-    // Center Details: Date & Certificate ID
-    const formattedDate = new Date(donation.createdAt).toLocaleDateString(
-      "en-IN",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      },
-    );
-
-    const detailsBoxX = width / 2 - 120;
-    const detailsBoxY = bottomY - 30;
-
-    // Soft background for details box
-    doc.fillColor("#F9FAFB").rect(detailsBoxX, detailsBoxY, 240, 65).fill();
-    doc.strokeColor("#E5E7EB").rect(detailsBoxX, detailsBoxY, 240, 65).stroke();
-
+    // --- BOTTOM SIGNATURE (RIGHT) ---
+    doc.y = footerY;
     doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(7.5)
-      .text(`DATE OF LOG:`, detailsBoxX + 10, detailsBoxY + 12)
-      .font("Helvetica")
-      .text(formattedDate, detailsBoxX + 10, detailsBoxY + 24)
-      .font("Helvetica-Bold")
-      .text(`PAYMENT MODE:`, detailsBoxX + 10, detailsBoxY + 38)
-      .font("Helvetica")
-      .text(donation.paymentMode, detailsBoxX + 10, detailsBoxY + 49);
+      .font("Times-Bold")
+      .fontSize(9)
+      .fillColor("#4B5563")
+      .text("For LOOK FOR CHILD FOUNDATION", width - 260, footerY, { align: "center", width: 200 });
 
+    doc.y = footerY + 28;
     doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(7.5)
-      .text(`CERTIFICATE ID:`, detailsBoxX + 130, detailsBoxY + 12)
-      .font("Helvetica")
-      .fontSize(7)
-      .text(donation._id.toString(), detailsBoxX + 130, detailsBoxY + 24)
-      .font("Helvetica-Bold")
-      .fontSize(7.5)
-      .text(`STATUS:`, detailsBoxX + 130, detailsBoxY + 38)
-      .font("Helvetica-Bold")
-      .fillColor("#065F46")
-      .text("VERIFIED SUCCESS", detailsBoxX + 130, detailsBoxY + 49);
-
-    // Right Signature: Founder / Board
-    doc
-      .moveTo(width - 240, bottomY)
-      .lineTo(width - 80, bottomY)
-      .strokeColor("#9CA3AF")
-      .lineWidth(0.8)
-      .stroke();
-    // Mock signature
-    doc
+      .font("Times-BoldItalic")
+      .fontSize(16)
       .fillColor("#1E3A8A")
-      .font("Times-Italic")
-      .fontSize(18)
-      .text("Harshit Gupta", width - 235, bottomY - 26, {
-        width: 150,
-        align: "center",
-      });
+      .text("M. Lal", width - 260, footerY + 28, { align: "center", width: 200 });
+
+    doc.y = footerY + 54;
     doc
-      .fillColor("#4B5563")
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text("FOUNDER / CHAIRPERSON", width - 240, bottomY + 5, {
-        width: 160,
-        align: "center",
-      })
-      .font("Helvetica")
+      .font("Times-Roman")
       .fontSize(8)
-      .text("Dream Girl Foundation", width - 240, bottomY + 18, {
-        width: 160,
-        align: "center",
-      });
+      .fillColor("#4B5563")
+      .text("President  Gen. Secretary  Treasurer", width - 260, footerY + 54, { align: "center", width: 200 });
+      
+    doc.fontSize(7).text("[SIGNATURE]", { align: "center", width: 200 });
 
     // End Document stream
     doc.end();

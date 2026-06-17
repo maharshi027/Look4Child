@@ -1,7 +1,29 @@
 import PDFDocument from "pdfkit";
 import Donation from "../models/donation.models.js";
 
-// Generate and stream the transaction receipt PDF
+// Helper to format date as DD-MMM-YYYY (e.g. 10-Jun-2026)
+const getReceiptDateStr = (date) => {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, "0");
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+  const month = months[d.getMonth()];
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
+// Helper to format date as DD-MM-YYYY (e.g. 10-06-2026)
+const getTableDateStr = (date) => {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
+// Generate and stream the transaction receipt PDF matching Image 1
 export const downloadTransactionReceipt = async (req, res) => {
   const { id } = req.params;
 
@@ -25,332 +47,199 @@ export const downloadTransactionReceipt = async (req, res) => {
     const doc = new PDFDocument({
       size: "A4",
       layout: "portrait",
-      margins: { top: 30, bottom: 30, left: 30, right: 30 },
+      margins: { top: 54, bottom: 54, left: 54, right: 54 },
     });
 
     // Pipe PDF directly to response stream
     doc.pipe(res);
 
     const width = doc.page.width;
-    const pageMargin = 30;
+    const pageMargin = 54;
     const contentWidth = width - 2 * pageMargin;
 
-    // --- DECORATIVE TOP BORDER ---
-    doc.lineWidth(3);
-    doc.strokeColor("#2563EB"); // Blue
+    // --- TOP REFERENCE & DATE ---
+    const receiptDateStr = getReceiptDateStr(donation.donationDate);
+    
     doc
-      .moveTo(pageMargin, 25)
-      .lineTo(width - pageMargin, 25)
-      .stroke();
+      .fillColor("#000000")
+      .font("Times-Roman")
+      .fontSize(10);
+      
+    // Write reference on left and date on right in the same line
+    doc.text("45147/2025-26/L4C", pageMargin, 54, { continued: true });
+    doc.text(receiptDateStr, { align: "right" });
 
-    // --- HEADER ---
-    doc.y = 40;
+    // --- TO ADDRESS BLOCK ---
+    doc.moveDown(3);
+    doc.font("Times-Roman").fontSize(10);
+    doc.text("To,");
+    doc.text(donation.donorName);
+    doc.text(donation.donorAddress, { width: 300 });
 
-    doc
-      .fillColor("#1F2937")
-      .font("Helvetica-Bold")
-      .fontSize(16)
-      .text("DREAM GIRL FOUNDATION", { align: "center" });
-
-    doc
-      .fillColor("#4B5563")
-      .font("Helvetica")
-      .fontSize(9)
-      .text("Registered NGO | Transforming Lives of Underprivileged Girls", {
-        align: "center",
-      });
-
-    doc.moveDown(0.8);
-
-    // --- RECEIPT TITLE ---
-    doc
-      .fillColor("#2563EB")
-      .font("Helvetica-Bold")
-      .fontSize(14)
-      .text("TRANSACTION RECEIPT", { align: "center" });
-
-    doc.moveDown(0.8);
-
-    // --- RECEIPT DETAILS BOX ---
-    const boxY = doc.y;
-    const boxHeight = 20;
-
-    doc
-      .strokeColor("#E5E7EB")
-      .lineWidth(1)
-      .rect(pageMargin, boxY, contentWidth, boxHeight)
-      .stroke();
-
-    doc
-      .fillColor("#F3F4F6")
-      .rect(pageMargin, boxY, contentWidth, boxHeight)
-      .fill();
-
-    doc
-      .fillColor("#1F2937")
-      .font("Helvetica-Bold")
-      .fontSize(10)
-      .text(
-        `Receipt ID: ${donation.transactionId}`,
-        pageMargin + 10,
-        boxY + 5,
-        {
-          width: contentWidth / 2,
-        },
-      )
-      .text(
-        `Date: ${new Date(donation.donationDate).toLocaleDateString("en-IN")}`,
-        pageMargin + contentWidth / 2 + 10,
-        boxY + 5,
-        { width: contentWidth / 2 - 20 },
-      );
-
+    // --- SALUTATION ---
     doc.moveDown(2);
+    doc.text("Dear Sir/Madam,");
 
-    // --- DONOR INFORMATION SECTION ---
+    // --- LETTER BODY ---
+    doc.moveDown(1.5);
+    doc.text("This is to inform you that your donation has been successfully received.", {
+      lineGap: 4
+    });
+    
+    doc.moveDown(0.8);
+    doc.text(
+      "We at Look For Child Foundation show our absolute gratitude towards the donation made by you for saving a life of a child. Efforts made by you and us will surely bring bright change in one's life.",
+      { lineGap: 4, width: contentWidth }
+    );
+    
+    doc.moveDown(0.8);
+    doc.text(
+      "Thanks for being a part of our project JEEVAN. Indeed it feels great to be a reason for others smiles.",
+      { lineGap: 4, width: contentWidth }
+    );
+
+    doc.moveDown(0.8);
+    doc.text(
+      "Further queries will be welcomed by Look For Child Foundation on the following contacts:-",
+      { lineGap: 4, width: contentWidth }
+    );
+
+    // --- CONTACT DETAILS CENTER ---
+    doc.moveDown(1.5);
+    doc.text("You Can", { align: "center" });
+    doc.text("Call us : +91-9899818585", { align: "center" });
+    doc.text("Write us On: info@look4child.ngo", { align: "center" });
+    doc.text("View us: www.look4child.ngo", { align: "center" });
+
+    // --- WARM REGARDS ---
+    doc.moveDown(2);
+    doc.text("With Warm Regards,");
+    doc.moveDown(1.5);
+    doc.text("Team");
+    doc.moveDown(1);
+    doc.font("Times-Bold").text("Look For Child Foundation.");
+
+    // --- DONATION DETAILS HEADER ---
+    doc.moveDown(2.5);
     doc
-      .fillColor("#1F2937")
-      .font("Helvetica-Bold")
+      .font("Times-Bold")
       .fontSize(11)
-      .text("DONOR INFORMATION", pageMargin, doc.y);
+      .text("Donation Details", { align: "center", underline: true });
 
-    doc.moveDown(0.3);
-
-    // Donor details box
-    const donorBoxY = doc.y;
-    doc
-      .strokeColor("#2563EB")
-      .lineWidth(1.5)
-      .rect(pageMargin, donorBoxY - 5, contentWidth, 90)
-      .stroke();
-
-    doc
-      .fillColor("#EFF6FF")
-      .rect(pageMargin, donorBoxY - 5, contentWidth, 90)
-      .fill();
-
-    doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text("Name:", pageMargin + 10, donorBoxY, { width: 80 })
-      .fillColor("#1F2937")
-      .font("Helvetica")
-      .fontSize(9)
-      .text(donation.donorName, pageMargin + 100, donorBoxY, {
-        width: contentWidth - 120,
-      });
-
-    doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text("Email:", pageMargin + 10, donorBoxY + 18, { width: 80 })
-      .fillColor("#1F2937")
-      .font("Helvetica")
-      .fontSize(9)
-      .text(donation.donorEmail, pageMargin + 100, donorBoxY + 18, {
-        width: contentWidth - 120,
-      });
-
-    doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text("Phone:", pageMargin + 10, donorBoxY + 36, { width: 80 })
-      .fillColor("#1F2937")
-      .font("Helvetica")
-      .fontSize(9)
-      .text(donation.donorPhone, pageMargin + 100, donorBoxY + 36, {
-        width: contentWidth - 120,
-      });
-
-    doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text("Address:", pageMargin + 10, donorBoxY + 54, { width: 80 })
-      .fillColor("#1F2937")
-      .font("Helvetica")
-      .fontSize(9)
-      .text(donation.donorAddress, pageMargin + 100, donorBoxY + 54, {
-        width: contentWidth - 120,
-      });
-
-    doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text("PAN No.:", pageMargin + 10, donorBoxY + 72, { width: 80 })
-      .fillColor("#1F2937")
-      .font("Helvetica")
-      .fontSize(9)
-      .text(donation.panNo, pageMargin + 100, donorBoxY + 72, {
-        width: contentWidth - 120,
-      });
-
-    doc.y = donorBoxY + 95;
-    doc.moveDown(0.3);
-
-    // --- TRANSACTION DETAILS SECTION ---
-    doc
-      .fillColor("#1F2937")
-      .font("Helvetica-Bold")
-      .fontSize(11)
-      .text("TRANSACTION DETAILS", pageMargin, doc.y);
-
-    doc.moveDown(0.3);
-
-    // Transaction details table
-    const tableY = doc.y;
-    const col1X = pageMargin + 10;
-    const col2X = pageMargin + contentWidth / 2 + 10;
-
-    // Light background for table
-    doc
-      .fillColor("#F9FAFB")
-      .rect(pageMargin, tableY - 5, contentWidth, 100)
-      .fill();
-
-    doc
-      .strokeColor("#E5E7EB")
-      .lineWidth(0.5)
-      .rect(pageMargin, tableY - 5, contentWidth, 100)
-      .stroke();
-
-    let tableRowY = tableY;
-
-    // Row 1
-    doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text("Payment Mode:", col1X, tableRowY)
-      .fillColor("#1F2937")
-      .font("Helvetica")
-      .text(
-        donation.paymentMode === "CASH" ? "💵 Cash" : "🌐 Online",
-        col2X,
-        tableRowY,
-      );
-
-    tableRowY += 18;
-
-    // Row 2
-    doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text("Payment Status:", col1X, tableRowY);
-
-    const statusColor =
-      donation.paymentStatus === "SUCCESS" ? "#059669" : "#DC2626";
-    doc
-      .fillColor(statusColor)
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text(donation.paymentStatus, col2X, tableRowY);
-
-    tableRowY += 18;
-
-    // Row 3
-    doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text("Donation Amount:", col1X, tableRowY)
-      .fillColor("#1F2937")
-      .font("Helvetica-Bold")
-      .fontSize(11)
-      .text(`₹ ${donation.amount.toLocaleString("en-IN")}`, col2X, tableRowY);
-
-    tableRowY += 18;
-
-    // Row 4
-    doc
-      .fillColor("#374151")
-      .font("Helvetica-Bold")
-      .fontSize(9)
-      .text("Transaction ID:", col1X, tableRowY)
-      .fillColor("#1F2937")
-      .font("Helvetica")
-      .fontSize(8)
-      .text(donation.transactionId, col2X, tableRowY);
-
-    tableRowY += 18;
-
-    // Row 5 (Razorpay details if online)
-    if (donation.paymentMode === "ONLINE") {
-      doc
-        .fillColor("#374151")
-        .font("Helvetica-Bold")
-        .fontSize(9)
-        .text("Order ID:", col1X, tableRowY)
-        .fillColor("#1F2937")
-        .font("Helvetica")
-        .fontSize(8)
-        .text(donation.razorpayOrderId || "N/A", col2X, tableRowY);
-
-      tableRowY += 18;
-
-      doc
-        .fillColor("#374151")
-        .font("Helvetica-Bold")
-        .fontSize(9)
-        .text("Payment ID:", col1X, tableRowY)
-        .fillColor("#1F2937")
-        .font("Helvetica")
-        .fontSize(8)
-        .text(donation.razorpayPaymentId || "N/A", col2X, tableRowY);
+    // Format donation number to match Image 1 L4C-[uniqueCode]
+    let donationNumber = donation.transactionId;
+    if (donationNumber && donationNumber.startsWith("TXN")) {
+      donationNumber = donationNumber.substring(3);
+    }
+    if (donationNumber && !donationNumber.startsWith("L4C-")) {
+      donationNumber = `L4C-${donationNumber}`;
     }
 
-    doc.y = tableY + 105;
+    const tableDateStr = getTableDateStr(donation.donationDate);
+    const donationStatus = donation.paymentStatus === "SUCCESS" ? "Paid" : donation.paymentStatus;
 
-    // --- THANK YOU MESSAGE ---
-    doc.moveDown(1);
+    // Table rows data
+    const rows = [
+      { label: "Donation Number:", value: donationNumber },
+      { label: "Donation Date:", value: tableDateStr },
+      { label: "Donation Status:", value: donationStatus },
+      { label: "Recieved with thanks from", value: donation.donorName },
+      { label: "Address", value: donation.donorAddress },
+      { label: "E-mail:", value: donation.donorEmail },
+      { label: "Pan No.", value: donation.panNo || "" },
+      { label: "Phone Number:", value: donation.donorPhone },
+      { label: "Amount", value: String(donation.amount) },
+    ];
 
+    // --- DRAW TABLE ---
+    const tableStartY = doc.y + 15;
+    let currentY = tableStartY;
+    const col1Width = 180;
+    const col2Width = contentWidth - col1Width;
+    const cellPadding = 6;
+
+    rows.forEach((row) => {
+      // Calculate height required for text in columns to support wrapping
+      const labelHeight = doc.heightOfString(row.label, {
+        width: col1Width - 2 * cellPadding,
+        font: "Times-Roman",
+        fontSize: 10,
+      });
+      const valueHeight = doc.heightOfString(row.value, {
+        width: col2Width - 2 * cellPadding,
+        font: "Times-Roman",
+        fontSize: 10,
+      });
+      const rowHeight = Math.max(22, Math.max(labelHeight, valueHeight) + 2 * cellPadding);
+
+      // Draw top line for the row
+      doc
+        .lineWidth(0.5)
+        .strokeColor("#D1D5DB")
+        .moveTo(pageMargin, currentY)
+        .lineTo(width - pageMargin, currentY)
+        .stroke();
+
+      // Write cell text
+      doc.fillColor("#000000").font("Times-Roman").fontSize(10);
+      doc.text(row.label, pageMargin + cellPadding, currentY + cellPadding, {
+        width: col1Width - 2 * cellPadding,
+      });
+      doc.text(row.value, pageMargin + col1Width + cellPadding, currentY + cellPadding, {
+        width: col2Width - 2 * cellPadding,
+      });
+
+      currentY += rowHeight;
+    });
+
+    // Draw bottom table boundary line
     doc
-      .fillColor("#2563EB")
-      .font("Helvetica-Bold")
-      .fontSize(12)
-      .text("THANK YOU FOR YOUR DONATION!", { align: "center" });
-
-    doc
-      .fillColor("#4B5563")
-      .font("Helvetica")
-      .fontSize(9)
-      .text(
-        "Your generous contribution helps us empower underprivileged girls.",
-        { align: "center" },
-      );
-
-    doc.moveDown(0.8);
-
-    // --- FOOTER ---
-    const footerY = doc.page.height - 60;
-    doc.y = footerY;
-
-    doc
-      .strokeColor("#E5E7EB")
       .lineWidth(0.5)
-      .moveTo(pageMargin, footerY)
-      .lineTo(width - pageMargin, footerY)
+      .strokeColor("#D1D5DB")
+      .moveTo(pageMargin, currentY)
+      .lineTo(width - pageMargin, currentY)
       .stroke();
 
+    // Draw outer boundary rectangle
     doc
-      .fillColor("#6B7280")
-      .font("Helvetica")
-      .fontSize(8)
-      .text("Dream Girl Foundation | www.dreamgirlfoundation.org", {
-        align: "center",
-      })
-      .text("For queries, contact us at: support@dreamgirlfoundation.org", {
-        align: "center",
-      })
-      .text(
-        `Receipt Generated: ${new Date().toLocaleString("en-IN")} | Reference: ${donation._id}`,
-        { align: "center" },
-      );
+      .lineWidth(0.5)
+      .strokeColor("#9CA3AF")
+      .rect(pageMargin, tableStartY, contentWidth, currentY - tableStartY)
+      .stroke();
+
+    // Draw vertical cell division line
+    doc
+      .lineWidth(0.5)
+      .strokeColor("#D1D5DB")
+      .moveTo(pageMargin + col1Width, tableStartY)
+      .lineTo(pageMargin + col1Width, currentY)
+      .stroke();
+
+    // --- TABLE FOOTER (For / PAN) ---
+    doc.y = currentY + 15;
+    doc
+      .fillColor("#000000")
+      .font("Times-Bold")
+      .fontSize(10);
+
+    doc.text("For: Look For Child Foundation.", pageMargin, currentY + 15, { continued: true });
+    doc.text("PAN: AAAAL4939Q", { align: "right" });
+
+    // --- DOWNLOAD CERTIFICATE LINK ---
+    const appUrl = process.env.VITE_APP_URL || "http://localhost:5000";
+    const certificateUrl = `${appUrl}/api/certificate/download-certificate/${donation._id}`;
+
+    doc.y = currentY + 45;
+    doc
+      .fillColor("#0000FF")
+      .font("Times-Roman")
+      .fontSize(10);
+
+    doc.text("Click here to print your certificate.", {
+      align: "center",
+      underline: true,
+      link: certificateUrl,
+    });
 
     // End Document stream
     doc.end();

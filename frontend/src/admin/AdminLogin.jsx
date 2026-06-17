@@ -51,8 +51,8 @@ export default function AdminLogin({ onLoginSuccess }) {
         <div className="admin-login-card fade-in-up">
           {/* Logo Section */}
           <div className="login-logo-section">
-            <div className="login-icon-circle">👧</div>
-            <h1>Dream Girl Foundation</h1>
+            <div className="login-icon-circle">🧸</div>
+            <h1>Look For Child Foundation</h1>
             <h3 className="login-subtitle">Admin Login</h3>
           </div>
 

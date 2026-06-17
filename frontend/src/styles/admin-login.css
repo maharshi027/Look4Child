@@ -1,4 +1,4 @@
-/* Admin Login Page - Simple & Clean */
+/* Admin Login Page - Premium & Minimalist Overhaul */
 
 * {
   margin: 0;
@@ -12,72 +12,76 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #3b5a8a 0%, #2e4a7a 100%);
+  background: radial-gradient(circle at top left, #1e3a8a, #0f172a 70%);
   min-height: 100vh;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  overflow: hidden;
 }
 
 .admin-login-background {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  z-index: 1;
 }
 
 .gradient-blur {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.25;
+  filter: blur(100px);
+  opacity: 0.15;
 }
 
 .blur-1 {
-  width: 400px;
-  height: 400px;
-  background: rgba(255, 107, 107, 0.15);
-  top: -100px;
-  left: -100px;
+  width: 450px;
+  height: 450px;
+  background: rgba(16, 185, 129, 0.3); /* Emerald */
+  top: -150px;
+  left: -150px;
 }
 
 .blur-2 {
-  width: 300px;
-  height: 300px;
-  background: rgba(249, 115, 22, 0.15);
-  bottom: -50px;
-  right: -50px;
+  width: 350px;
+  height: 350px;
+  background: rgba(37, 99, 235, 0.3); /* Blue */
+  bottom: -80px;
+  right: -80px;
 }
 
 .blur-3 {
-  width: 250px;
-  height: 250px;
-  background: rgba(59, 130, 246, 0.15);
-  top: 50%;
-  right: 10%;
+  width: 300px;
+  height: 300px;
+  background: rgba(79, 70, 229, 0.2); /* Indigo */
+  top: 40%;
+  right: 15%;
 }
 
 .admin-login-container {
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   padding: 1.5rem;
 }
 
 .admin-login-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  padding: 2.5rem 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  padding: 3rem 2.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .admin-login-card.fade-in-up {
-  animation: slideIn 0.4s ease-out;
+  animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -88,39 +92,44 @@
 /* Logo Section */
 .login-logo-section {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .login-icon-circle {
-  width: 70px;
-  height: 70px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 50%;
+  width: 76px;
+  height: 76px;
+  background: linear-gradient(135deg, var(--primary, #2563eb) 0%, var(--secondary, #10b981) 100%);
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1rem;
+  margin: 0 auto 1.25rem;
   color: white;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  font-size: 2rem;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+  font-size: 2.25rem;
+  transition: transform 0.3s ease;
 }
 
-.login-icon-circle svg {
-  width: 35px;
-  height: 35px;
+.admin-login-card:hover .login-icon-circle {
+  transform: scale(1.05) rotate(4deg);
 }
 
 .login-logo-section h1 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.25rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+  line-height: 1.25;
 }
 
-.login-logo-section p {
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin: 0;
+.login-subtitle {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Form Section */
@@ -129,19 +138,27 @@
 }
 
 .login-error-message {
-  background-color: #fee2e2;
+  background-color: #fef2f2;
   color: #991b1b;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
   margin-bottom: 1.5rem;
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
+  border: 1px solid #fee2e2;
   border-left: 4px solid #ef4444;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
 /* Form Groups */
 .form-group-modern {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .input-wrapper {
@@ -158,81 +175,81 @@
   transform: translateY(-50%);
   width: 18px;
   height: 18px;
-  color: #9ca3af;
+  color: #94a3b8;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .input-icon svg {
   width: 100%;
   height: 100%;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 2.2;
 }
 
 .form-input-modern {
   width: 100%;
-  padding: 8px 12px 8px 36px;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
+  padding: 0.75rem 1rem 0.75rem 2.25rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
   font-weight: 400;
   transition: all 0.2s ease;
-  background-color: white;
-  color: #1f2937;
+  background-color: #f8fafc;
+  color: #0f172a;
 }
 
 .form-input-modern::placeholder {
-  color: #9ca3af;
+  color: #94a3b8;
 }
 
 .form-input-modern:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2563eb;
   background-color: white;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-}
-
-.form-input-modern:disabled {
-  background-color: #f3f4f6;
-  cursor: not-allowed;
-  opacity: 0.6;
+  box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.12);
 }
 
 .input-label {
   position: absolute;
   left: 0;
   top: -22px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #374151;
-  text-transform: capitalize;
-  letter-spacing: 0.3px;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   pointer-events: none;
 }
 
 /* Submit Button */
 .btn-login-submit {
   width: 100%;
-  padding: 11px 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0.85rem 1.25rem;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  border-radius: 10px;
+  font-family: "Outfit", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: 1.25rem;
+  margin-top: 2rem;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
 }
 
 .btn-login-submit:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.25);
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
 }
 
 .btn-login-submit:active:not(:disabled) {
@@ -241,96 +258,53 @@
 
 .btn-login-submit:disabled {
   opacity: 0.6;
+  background: #cbd5e1;
+  box-shadow: none;
   cursor: not-allowed;
 }
 
 .btn-text {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .btn-icon {
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 /* Footer Info */
 .login-footer {
-  margin-top: 1.25rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e2e8f0;
   text-align: center;
 }
 
 .login-footer p {
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: 0.78rem;
+  color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
   margin: 0;
-  line-height: 1.4;
+  font-weight: 500;
 }
 
 .info-icon {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
-/* Responsive */
+/* Responsive Queries */
 @media (max-width: 480px) {
   .admin-login-card {
-    padding: 1.75rem 1.25rem;
+    padding: 2.25rem 1.5rem;
   }
 
   .login-logo-section {
-    margin-bottom: 1.5rem;
-  }
-
-  .login-icon-circle {
-    width: 60px;
-    height: 60px;
-    font-size: 1.8rem;
-  }
-
-  .login-icon-circle svg {
-    width: 30px;
-    height: 30px;
-  }
-
-  .login-logo-section h1 {
-    font-size: 1.4rem;
-  }
-
-  .login-logo-section p {
-    font-size: 0.85rem;
-  }
-
-  .form-input-modern {
-    padding: 10px 32px 10px 34px;
-    font-size: 16px;
-  }
-
-  .input-icon {
-    left: 10px;
-  }
-
-  .input-label {
-    left: 34px;
-  }
-
-  .password-toggle {
-    right: 8px;
+    margin-bottom: 2rem;
   }
 
   .btn-login-submit {
-    padding: 10px 14px;
-    font-size: 0.9rem;
-  }
-
-  .form-group-modern {
-    margin-bottom: 1rem;
-  }
-
-  .gradient-blur {
-    filter: blur(60px);
+    padding: 0.75rem 1.25rem;
   }
 }

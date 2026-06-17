@@ -36,7 +36,7 @@ export default function AdminDashboard({ onLogout }) {
       {/* Sidebar */}
       <aside className={`admin-sidebar ${sidebarOpen ? "open" : "closed"}`}>
         <div className="sidebar-header">
-          <h2 className="sidebar-title">Dream Girl CMS</h2>
+          <h2 className="sidebar-title">L4C Foundation CMS</h2>
         </div>
         <nav className="sidebar-nav">
           <button

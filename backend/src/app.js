@@ -19,7 +19,7 @@ import { downloadTransactionReceipt } from "./controllers/receipt.controller.js"
 // ============================================================================
 export const setupRootRoute = (app) => {
   app.get("/", (req, res) => {
-    res.send("Dream Girl Foundation Backend API is running...");
+    res.send("Look For Child Foundation Backend API is running...");
   });
 };
 

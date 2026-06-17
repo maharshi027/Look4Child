@@ -82,11 +82,11 @@ export default function OnlineDonation() {
         } else {
           // Real Razorpay flow
           const options = {
-            key: "YOUR_RAZORPAY_KEY_ID",
+            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
             amount: data.order.amount,
             currency: "INR",
-            name: "Dream Girl Foundation",
-            description: "Girl Empowerment Initiatives",
+            name: "Look For Child Foundation",
+            description: "Child Empowerment Initiatives",
             order_id: data.order.id,
             handler: async function (response) {
               try {
@@ -117,7 +117,7 @@ export default function OnlineDonation() {
               email: formData.email,
               contact: formData.phone,
             },
-            theme: { color: "#F43F5E" },
+            theme: { color: "#2563EB" }, // Unified deep blue theme
           };
 
           const rzp = new window.Razorpay(options);
@@ -188,25 +188,35 @@ export default function OnlineDonation() {
     return (
       <div className="success-screen fade-in">
         <div className="success-card">
-          <div className="success-icon">✅</div>
+          <div className="success-icon">🎉</div>
           <h2>Payment Successful!</h2>
-          <p>Thank you for your generous donation to Dream Girl Foundation.</p>
+          <p>Thank you for your generous contribution to Look For Child Foundation.</p>
           <p className="success-details">
-            Your transaction has been completed and recorded securely.
+            Your transaction has been securely processed and recorded.
           </p>
 
-          <div className="download-actions">
+          <div className="download-actions" style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1.5rem" }}>
+            <a
+              href={`${import.meta.env.VITE_APP_URL}/api/receipt/download-receipt/${successData.donationId}`}
+              className="btn btn-download-receipt"
+              target="_blank"
+              rel="noreferrer"
+            >
+              📄 Download Donation Receipt
+            </a>
             <a
               href={`${import.meta.env.VITE_APP_URL}/api/certificate/download-certificate/${successData.donationId}`}
               className="btn btn-download-certificate"
-              download
+              target="_blank"
+              rel="noreferrer"
             >
-              🖨️ Download Tax Exemption Certificate
+              🖨️ Download Exemption Certificate
             </a>
           </div>
 
           <button
             className="btn btn-new-donation"
+            style={{ marginTop: "1.5rem" }}
             onClick={() => setSuccessData(null)}
           >
             Make Another Donation
@@ -222,7 +232,7 @@ export default function OnlineDonation() {
         <h2>Make a Secure Contribution</h2>
         <p className="donation-form-subtitle">
           Your donation helps us provide education, nutrition, and medical help
-          to underprivileged girls.
+          to underprivileged children.
         </p>
 
         {/* AMOUNT SECTION */}
@@ -345,23 +355,26 @@ export default function OnlineDonation() {
 
           <div className="form-group">
             <label htmlFor="donor-pan">PAN Number *</label>
-            <input
-              id="donor-pan"
-              type="text"
-              className={`form-input ${errors.panNo ? "input-error" : ""}`}
-              placeholder="ABCDE1234F"
-              name="panNo"
-              value={formData.panNo}
-              onChange={(e) =>
-                handleInputChange({
-                  target: {
-                    name: "panNo",
-                    value: e.target.value.toUpperCase(),
-                  },
-                })
-              }
-              required
-            />
+            <div className="input-icon-wrapper">
+              <span className="input-icon">🪪</span>
+              <input
+                id="donor-pan"
+                type="text"
+                className={`form-input form-input-with-icon ${errors.panNo ? "input-error" : ""}`}
+                placeholder="ABCDE1234F"
+                name="panNo"
+                value={formData.panNo}
+                onChange={(e) =>
+                  handleInputChange({
+                    target: {
+                      name: "panNo",
+                      value: e.target.value.toUpperCase(),
+                    },
+                  })
+                }
+                required
+              />
+            </div>
             {errors.panNo && <span className="error-text">{errors.panNo}</span>}
           </div>
         </div>
@@ -397,7 +410,7 @@ export default function OnlineDonation() {
                 Simulated Checkout Gateway
               </h3>
               <p style={{ fontSize: "0.85rem", color: "var(--text-light)" }}>
-                Testing secure payment execution loop for Dream Girl Foundation.
+                Testing secure payment execution loop for Look For Child Foundation.
               </p>
             </div>
 
@@ -433,7 +446,7 @@ export default function OnlineDonation() {
                 }}
               >
                 <span>Recipient:</span>
-                <strong>Dream Girl Foundation</strong>
+                <strong>Look For Child Foundation</strong>
               </div>
               <div
                 style={{
