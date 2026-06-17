@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 
 export default function AdminCashEntry({ onRecordAdded }) {
-  const [searchMobile, setSearchMobile] = useState("");
-  const [searchLoading, setSearchLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [cashRecord, setCashRecord] = useState({
@@ -14,14 +12,6 @@ export default function AdminCashEntry({ onRecordAdded }) {
     panNo: "",
     amount: "",
     donationDate: new Date().toISOString().split("T")[0],
-    txnId: "",
-    user: "Admin",
-    type: "HEALTH CARE",
-    gatewayName: "CASH",
-    claimStatus: "PENDING",
-    paymentStatus: "SUCCESS",
-    orderId: "",
-    additionalInfo: "",
   });
 
   const validateForm = () => {
@@ -44,40 +34,6 @@ export default function AdminCashEntry({ onRecordAdded }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSearch = async () => {
-    if (!searchMobile.trim()) {
-      alert("Please enter a mobile number to search.");
-      return;
-    }
-    setSearchLoading(true);
-    try {
-      const { data } = await axios.get("/api/donations/all-records");
-      const matched = data.find(
-        (record) =>
-          record.donorPhone &&
-          record.donorPhone.replace(/\D/g, "").includes(searchMobile.replace(/\D/g, ""))
-      );
-      if (matched) {
-        setCashRecord((prev) => ({
-          ...prev,
-          name: matched.donorName,
-          email: matched.donorEmail,
-          phone: matched.donorPhone,
-          address: matched.donorAddress || matched.address || "",
-          panNo: matched.panNo || "",
-        }));
-        alert(`🔍 Found donor: ${matched.donorName}. Form details pre-filled.`);
-      } else {
-        alert("No donor record found with this mobile number.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Failed to search donor database.");
-    } finally {
-      setSearchLoading(false);
-    }
-  };
-
   const saveRecord = async (keepValues = false) => {
     if (!validateForm()) return false;
     setLoading(true);
@@ -90,14 +46,6 @@ export default function AdminCashEntry({ onRecordAdded }) {
         panNo: cashRecord.panNo,
         amount: cashRecord.amount,
         donationDate: cashRecord.donationDate,
-        txnId: cashRecord.txnId,
-        user: cashRecord.user,
-        type: cashRecord.type,
-        gatewayName: cashRecord.gatewayName,
-        claimStatus: cashRecord.claimStatus,
-        paymentStatus: cashRecord.paymentStatus,
-        orderId: cashRecord.orderId,
-        additionalInfo: cashRecord.additionalInfo,
       });
 
       if (data.success) {
@@ -129,30 +77,14 @@ export default function AdminCashEntry({ onRecordAdded }) {
             panNo: "",
             amount: "",
             donationDate: new Date().toISOString().split("T")[0],
-            txnId: "",
-            user: "Admin",
-            type: "HEALTH CARE",
-            gatewayName: "CASH",
-            claimStatus: "PENDING",
-            paymentStatus: "SUCCESS",
-            orderId: "",
-            additionalInfo: "",
           });
-          setSearchMobile("");
-        } else {
-          // Keep structure, clear TXN ID/Order ID for new entry
-          setCashRecord((prev) => ({
-            ...prev,
-            txnId: "",
-            orderId: "",
-          }));
         }
         setErrors({});
         return true;
       }
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to record donation record.");
+      alert(err.response?.data?.message || "Failed to record donation.");
     } finally {
       setLoading(false);
     }
@@ -169,26 +101,6 @@ export default function AdminCashEntry({ onRecordAdded }) {
 
   return (
     <div className="cms-cash-card compact-card fade-in">
-      {/* Top Search Block */}
-      <div className="compact-search-row">
-        <input
-          type="text"
-          className="form-input search-input"
-          placeholder="Enter mobile no"
-          value={searchMobile}
-          onChange={(e) => setSearchMobile(e.target.value)}
-        />
-        <button
-          type="button"
-          onClick={handleSearch}
-          disabled={searchLoading}
-          className="search-btn-red"
-        >
-          {searchLoading ? "..." : "🔍 Search"}
-        </button>
-      </div>
-
-      {/* Grid Layout form */}
       <form onSubmit={(e) => { e.preventDefault(); saveRecord(false); }} className="compact-form">
         <div className="compact-grid">
           {/* Row 1 */}
@@ -278,104 +190,7 @@ export default function AdminCashEntry({ onRecordAdded }) {
 
           {/* Row 4 */}
           <div className="form-group">
-            <label>TXN ID</label>
-            <input
-              type="text"
-              name="txnId"
-              className="form-input compact-input"
-              placeholder="Transaction ID (Auto-generated if empty)"
-              value={cashRecord.txnId}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-group">
-            <label>User</label>
-            <select
-              name="user"
-              className="form-input compact-input select-input"
-              value={cashRecord.user}
-              onChange={handleInputChange}
-            >
-              <option value="Admin">Admin</option>
-              <option value="Staff">Staff</option>
-              <option value="Volunteer">Volunteer</option>
-            </select>
-          </div>
-
-          {/* Row 5 */}
-          <div className="form-group">
-            <label>Type</label>
-            <select
-              name="type"
-              className="form-input compact-input select-input"
-              value={cashRecord.type}
-              onChange={handleInputChange}
-            >
-              <option value="HEALTH CARE">HEALTH CARE</option>
-              <option value="EDUCATION">EDUCATION</option>
-              <option value="NUTRITION">NUTRITION</option>
-              <option value="GENERAL">GENERAL</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Gateway Name</label>
-            <select
-              name="gatewayName"
-              className="form-input compact-input select-input"
-              value={cashRecord.gatewayName}
-              onChange={handleInputChange}
-            >
-              <option value="CASH">CASH</option>
-              <option value="GOOGLE PAY">GOOGLE PAY</option>
-              <option value="PHONEPE">PHONEPE</option>
-              <option value="PAYTM">PAYTM</option>
-              <option value="NEFT/IMPS">NEFT/IMPS</option>
-              <option value="RAZORPAY">RAZORPAY</option>
-            </select>
-          </div>
-
-          {/* Row 6 */}
-          <div className="form-group">
-            <label>Claim Status</label>
-            <select
-              name="claimStatus"
-              className="form-input compact-input select-input"
-              value={cashRecord.claimStatus}
-              onChange={handleInputChange}
-            >
-              <option value="PENDING">PENDING</option>
-              <option value="APPROVED">APPROVED</option>
-              <option value="REJECTED">REJECTED</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Payment Status</label>
-            <select
-              name="paymentStatus"
-              className="form-input compact-input select-input"
-              value={cashRecord.paymentStatus}
-              onChange={handleInputChange}
-            >
-              <option value="SUCCESS">SUCCESS</option>
-              <option value="PENDING">PENDING</option>
-              <option value="FAILED">FAILED</option>
-            </select>
-          </div>
-
-          {/* Row 7 */}
-          <div className="form-group">
-            <label>Order ID</label>
-            <input
-              type="text"
-              name="orderId"
-              className="form-input compact-input"
-              placeholder="Order ID (Auto-generated if empty)"
-              value={cashRecord.orderId}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-group">
-            <label>Date</label>
+            <label>Date <span className="required">*</span></label>
             <input
               type="date"
               name="donationDate"
@@ -385,19 +200,6 @@ export default function AdminCashEntry({ onRecordAdded }) {
               required
             />
           </div>
-        </div>
-
-        {/* Row 8 */}
-        <div className="form-group full-width">
-          <label>Additional Information</label>
-          <textarea
-            name="additionalInfo"
-            className="form-input compact-textarea"
-            rows="2"
-            placeholder="Additional Information"
-            value={cashRecord.additionalInfo}
-            onChange={handleInputChange}
-          />
         </div>
 
         {/* Color-coded Action Buttons */}
