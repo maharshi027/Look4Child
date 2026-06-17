@@ -12,6 +12,8 @@ export default function AdminCashEntry({ onRecordAdded }) {
     panNo: "",
     amount: "",
     donationDate: new Date().toISOString().split("T")[0],
+    gatewayName: "CASH",
+    referenceNumber: "",
   });
 
   const validateForm = () => {
@@ -29,6 +31,8 @@ export default function AdminCashEntry({ onRecordAdded }) {
       newErrors.panNo = "Invalid PAN format (e.g., ABCDE1234F)";
     if (!cashRecord.amount || parseFloat(cashRecord.amount) <= 0)
       newErrors.amount = "Amount must be > 0";
+    if (cashRecord.gatewayName !== "CASH" && !cashRecord.referenceNumber.trim())
+      newErrors.referenceNumber = "Reference number is required for non-cash payment";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -46,6 +50,9 @@ export default function AdminCashEntry({ onRecordAdded }) {
         panNo: cashRecord.panNo,
         amount: cashRecord.amount,
         donationDate: cashRecord.donationDate,
+        paymentMode: cashRecord.gatewayName === "CASH" ? "CASH" : "ONLINE",
+        gatewayName: cashRecord.gatewayName,
+        txnId: cashRecord.referenceNumber,
       });
 
       if (data.success) {
@@ -77,7 +84,15 @@ export default function AdminCashEntry({ onRecordAdded }) {
             panNo: "",
             amount: "",
             donationDate: new Date().toISOString().split("T")[0],
+            gatewayName: "CASH",
+            referenceNumber: "",
           });
+        } else {
+          // Keep common values but clear reference number
+          setCashRecord(prev => ({
+            ...prev,
+            referenceNumber: "",
+          }));
         }
         setErrors({});
         return true;
@@ -199,6 +214,35 @@ export default function AdminCashEntry({ onRecordAdded }) {
               onChange={handleInputChange}
               required
             />
+          </div>
+          <div className="form-group">
+            <label>Mode of Payment <span className="required">*</span></label>
+            <select
+              name="gatewayName"
+              className="form-input compact-input"
+              value={cashRecord.gatewayName}
+              onChange={handleInputChange}
+            >
+              <option value="CASH">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="CHEQUE">Cheque</option>
+              <option value="BANK TRANSFER">Bank Transfer</option>
+              <option value="NEFT">NEFT</option>
+            </select>
+          </div>
+
+          {/* Row 5 */}
+          <div className="form-group full-width">
+            <label>Reference Number {cashRecord.gatewayName !== "CASH" && <span className="required">*</span>}</label>
+            <input
+              type="text"
+              name="referenceNumber"
+              className={`form-input compact-input ${errors.referenceNumber ? "input-error" : ""}`}
+              placeholder={cashRecord.gatewayName === "CASH" ? "Reference Number / Txn ID (Optional)" : "Reference Number / Txn ID"}
+              value={cashRecord.referenceNumber}
+              onChange={handleInputChange}
+            />
+            {errors.referenceNumber && <span className="error-text">{errors.referenceNumber}</span>}
           </div>
         </div>
 

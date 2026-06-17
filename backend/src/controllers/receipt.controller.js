@@ -57,20 +57,58 @@ export const downloadTransactionReceipt = async (req, res) => {
     const pageMargin = 54;
     const contentWidth = width - 2 * pageMargin;
 
+    // --- LETTERHEAD ---
+    doc.y = 35;
+    
+    // Emerald Green & Blue logo text centered
+    doc
+      .font("Times-BoldItalic")
+      .fontSize(26)
+      .fillColor("#059669")
+      .text("Look ", { align: "center", continued: true });
+      
+    doc
+      .fillColor("#2563EB")
+      .text("child", { continued: true });
+      
+    doc
+      .font("Times-Roman")
+      .fontSize(9.5)
+      .fillColor("#4B5563")
+      .text("\nFOUNDATION", { align: "center" });
+
+    // Organization Address and Contact details below the logo text
+    doc
+      .fontSize(8.5)
+      .fillColor("#6B7280")
+      .text("Regd. Office: Room No.1, Opp. Sarpanch Anant House, Tigra Village, Sec-57, Gurgaon", { align: "center", lineGap: 2 })
+      .text("Phone: +91 98998 18585  |  Email: info@look4child.ngo  |  Web: www.look4child.ngo", { align: "center" });
+
+    // Crimson colored line separator under the letterhead details
+    doc.moveDown(0.5);
+    const lineY = doc.y;
+    doc
+      .lineWidth(1.5)
+      .strokeColor("#B91C1C")
+      .moveTo(pageMargin, lineY)
+      .lineTo(width - pageMargin, lineY)
+      .stroke();
+
     // --- TOP REFERENCE & DATE ---
     const receiptDateStr = getReceiptDateStr(donation.donationDate);
+    const refY = lineY + 12;
     
     doc
       .fillColor("#000000")
       .font("Times-Roman")
       .fontSize(10);
       
-    // Write reference on left and date on right in the same line
-    doc.text("45147/2025-26/L4C", pageMargin, 54, { continued: true });
+    // Write reference on left and date on right in the same line below the letterhead line
+    doc.text("45147/2025-26/L4C", pageMargin, refY, { continued: true });
     doc.text(receiptDateStr, { align: "right" });
 
     // --- TO ADDRESS BLOCK ---
-    doc.moveDown(3);
+    doc.y = refY + 24;
     doc.font("Times-Roman").fontSize(10);
     doc.text("To,");
     doc.text(donation.donorName);
@@ -148,7 +186,9 @@ export const downloadTransactionReceipt = async (req, res) => {
       { label: "E-mail:", value: donation.donorEmail },
       { label: "Pan No.", value: donation.panNo || "" },
       { label: "Phone Number:", value: donation.donorPhone },
-      { label: "Amount", value: String(donation.amount) },
+      { label: "Payment Mode:", value: (donation.gatewayName || donation.paymentMode || "CASH").toUpperCase() },
+      { label: "Reference Number:", value: donation.transactionId || "N/A" },
+      { label: "Amount", value: `INR ${donation.amount}/-` },
     ];
 
     // --- DRAW TABLE ---

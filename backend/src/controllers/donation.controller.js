@@ -213,6 +213,7 @@ export const recordCash = async (req, res) => {
     txnId,
     orderId,
     paymentStatus,
+    paymentMode,
   } = req.body || {};
 
   try {
@@ -255,7 +256,7 @@ export const recordCash = async (req, res) => {
       donorAddress: address,
       panNo: panNo.toUpperCase(),
       donationDate: donationDate ? new Date(donationDate) : new Date(),
-      paymentMode: "CASH",
+      paymentMode: paymentMode || "CASH",
       paymentStatus: paymentStatus || "SUCCESS",
       transactionId: finalTxnId,
       razorpayOrderId: finalOrderId,
