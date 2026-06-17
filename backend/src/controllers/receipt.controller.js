@@ -1,5 +1,11 @@
 import PDFDocument from "pdfkit";
 import Donation from "../models/donation.models.js";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const logoPath = path.join(__dirname, "../assets/logo.png");
 
 // Helper to format date as DD-MMM-YYYY (e.g. 10-Jun-2026)
 const getReceiptDateStr = (date) => {
@@ -43,50 +49,37 @@ export const downloadTransactionReceipt = async (req, res) => {
       `attachment; filename=transaction_receipt_${donation.transactionId}.pdf`,
     );
 
-    // Create a portrait A4 PDF document
+    // Create a portrait A4 PDF document with optimized margins to fit on one page
     const doc = new PDFDocument({
       size: "A4",
       layout: "portrait",
-      margins: { top: 54, bottom: 54, left: 54, right: 54 },
+      margins: { top: 30, bottom: 30, left: 45, right: 45 },
     });
 
     // Pipe PDF directly to response stream
     doc.pipe(res);
 
     const width = doc.page.width;
-    const pageMargin = 54;
+    const pageMargin = 45;
     const contentWidth = width - 2 * pageMargin;
 
-    // --- LETTERHEAD ---
-    doc.y = 35;
-    
-    // Emerald Green & Blue logo text centered
-    doc
-      .font("Times-BoldItalic")
-      .fontSize(26)
-      .fillColor("#059669")
-      .text("Look ", { align: "center", continued: true });
-      
-    doc
-      .fillColor("#2563EB")
-      .text("child", { continued: true });
-      
+    // --- LETTERHEAD LOGO IMAGE ---
+    const logoWidth = 100;
+    const logoHeight = 63;
+    const logoX = (width - logoWidth) / 2;
+    doc.image(logoPath, logoX, 30, { width: logoWidth, height: logoHeight });
+
+    // Organization Address and Contact details below the logo image
+    doc.y = 98;
     doc
       .font("Times-Roman")
-      .fontSize(9.5)
+      .fontSize(8)
       .fillColor("#4B5563")
-      .text("\nFOUNDATION", { align: "center" });
-
-    // Organization Address and Contact details below the logo text
-    doc
-      .fontSize(8.5)
-      .fillColor("#6B7280")
-      .text("Regd. Office: Room No.1, Opp. Sarpanch Anant House, Tigra Village, Sec-57, Gurgaon", { align: "center", lineGap: 2 })
+      .text("Regd. Office: Room No.1, Opp. Sarpanch Anant House, Tigra Village, Sec-57, Gurgaon", { align: "center", lineGap: 1.5 })
       .text("Phone: +91 98998 18585  |  Email: info@look4child.ngo  |  Web: www.look4child.ngo", { align: "center" });
 
     // Crimson colored line separator under the letterhead details
-    doc.moveDown(0.5);
-    const lineY = doc.y;
+    const lineY = 126;
     doc
       .lineWidth(1.5)
       .strokeColor("#B91C1C")
@@ -96,72 +89,68 @@ export const downloadTransactionReceipt = async (req, res) => {
 
     // --- TOP REFERENCE & DATE ---
     const receiptDateStr = getReceiptDateStr(donation.donationDate);
-    const refY = lineY + 12;
+    const refY = lineY + 10;
     
     doc
       .fillColor("#000000")
       .font("Times-Roman")
-      .fontSize(10);
+      .fontSize(9.5);
       
     // Write reference on left and date on right in the same line below the letterhead line
     doc.text("45147/2025-26/L4C", pageMargin, refY, { continued: true });
     doc.text(receiptDateStr, { align: "right" });
 
     // --- TO ADDRESS BLOCK ---
-    doc.y = refY + 24;
-    doc.font("Times-Roman").fontSize(10);
+    doc.y = refY + 15;
+    doc.font("Times-Roman").fontSize(9.5);
     doc.text("To,");
     doc.text(donation.donorName);
     doc.text(donation.donorAddress, { width: 300 });
 
     // --- SALUTATION ---
-    doc.moveDown(2);
+    doc.y = doc.y + 12;
     doc.text("Dear Sir/Madam,");
 
     // --- LETTER BODY ---
-    doc.moveDown(1.5);
+    doc.y = doc.y + 10;
     doc.text("This is to inform you that your donation has been successfully received.", {
-      lineGap: 4
+      lineGap: 3
     });
     
-    doc.moveDown(0.8);
+    doc.moveDown(0.5);
     doc.text(
       "We at Look For Child Foundation show our absolute gratitude towards the donation made by you for saving a life of a child. Efforts made by you and us will surely bring bright change in one's life.",
-      { lineGap: 4, width: contentWidth }
+      { lineGap: 3, width: contentWidth }
     );
     
-    doc.moveDown(0.8);
+    doc.moveDown(0.5);
     doc.text(
       "Thanks for being a part of our project JEEVAN. Indeed it feels great to be a reason for others smiles.",
-      { lineGap: 4, width: contentWidth }
+      { lineGap: 3, width: contentWidth }
     );
 
-    doc.moveDown(0.8);
+    doc.moveDown(0.5);
     doc.text(
       "Further queries will be welcomed by Look For Child Foundation on the following contacts:-",
-      { lineGap: 4, width: contentWidth }
+      { lineGap: 3, width: contentWidth }
     );
 
-    // --- CONTACT DETAILS CENTER ---
-    doc.moveDown(1.5);
-    doc.text("You Can", { align: "center" });
-    doc.text("Call us : +91-9899818585", { align: "center" });
-    doc.text("Write us On: info@look4child.ngo", { align: "center" });
-    doc.text("View us: www.look4child.ngo", { align: "center" });
+    // --- CONTACT DETAILS SINGLE LINE ---
+    doc.moveDown(0.5);
+    doc.font("Times-Bold").text("Contact NGO: ", { align: "center", continued: true });
+    doc.font("Times-Roman").text("Call: +91-9899818585  |  Email: info@look4child.ngo  |  Web: www.look4child.ngo", { align: "center" });
 
     // --- WARM REGARDS ---
-    doc.moveDown(2);
-    doc.text("With Warm Regards,");
-    doc.moveDown(1.5);
-    doc.text("Team");
-    doc.moveDown(1);
+    doc.moveDown(0.8);
+    doc.text("With Warm Regards,", pageMargin);
+    doc.text("Team ", { continued: true });
     doc.font("Times-Bold").text("Look For Child Foundation.");
 
     // --- DONATION DETAILS HEADER ---
-    doc.moveDown(2.5);
+    doc.moveDown(1.2);
     doc
       .font("Times-Bold")
-      .fontSize(11)
+      .fontSize(10)
       .text("Donation Details", { align: "center", underline: true });
 
     // Format donation number to match Image 1 L4C-[uniqueCode]
@@ -192,25 +181,25 @@ export const downloadTransactionReceipt = async (req, res) => {
     ];
 
     // --- DRAW TABLE ---
-    const tableStartY = doc.y + 15;
+    const tableStartY = doc.y + 8;
     let currentY = tableStartY;
     const col1Width = 180;
     const col2Width = contentWidth - col1Width;
-    const cellPadding = 6;
+    const cellPadding = 4.5;
 
     rows.forEach((row) => {
       // Calculate height required for text in columns to support wrapping
       const labelHeight = doc.heightOfString(row.label, {
         width: col1Width - 2 * cellPadding,
         font: "Times-Roman",
-        fontSize: 10,
+        fontSize: 9,
       });
       const valueHeight = doc.heightOfString(row.value, {
         width: col2Width - 2 * cellPadding,
         font: "Times-Roman",
-        fontSize: 10,
+        fontSize: 9,
       });
-      const rowHeight = Math.max(22, Math.max(labelHeight, valueHeight) + 2 * cellPadding);
+      const rowHeight = Math.max(18, Math.max(labelHeight, valueHeight) + 2 * cellPadding);
 
       // Draw top line for the row
       doc
@@ -221,7 +210,7 @@ export const downloadTransactionReceipt = async (req, res) => {
         .stroke();
 
       // Write cell text
-      doc.fillColor("#000000").font("Times-Roman").fontSize(10);
+      doc.fillColor("#000000").font("Times-Roman").fontSize(9);
       doc.text(row.label, pageMargin + cellPadding, currentY + cellPadding, {
         width: col1Width - 2 * cellPadding,
       });
@@ -256,24 +245,24 @@ export const downloadTransactionReceipt = async (req, res) => {
       .stroke();
 
     // --- TABLE FOOTER (For / PAN) ---
-    doc.y = currentY + 15;
+    doc.y = currentY + 10;
     doc
       .fillColor("#000000")
       .font("Times-Bold")
-      .fontSize(10);
+      .fontSize(9.5);
 
-    doc.text("For: Look For Child Foundation.", pageMargin, currentY + 15, { continued: true });
+    doc.text("For: Look For Child Foundation.", pageMargin, currentY + 10, { continued: true });
     doc.text("PAN: AAAAL4939Q", { align: "right" });
 
     // --- DOWNLOAD CERTIFICATE LINK ---
     const appUrl = process.env.VITE_APP_URL || "http://localhost:5000";
     const certificateUrl = `${appUrl}/api/certificate/download-certificate/${donation._id}`;
 
-    doc.y = currentY + 45;
+    doc.y = currentY + 30;
     doc
       .fillColor("#0000FF")
       .font("Times-Roman")
-      .fontSize(10);
+      .fontSize(9.5);
 
     doc.text("Click here to print your certificate.", {
       align: "center",

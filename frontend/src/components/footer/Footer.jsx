@@ -1,4 +1,5 @@
 import "./footer.css";
+import logoImg from "../../assets/logo.png";
 
 export default function Footer({ onNav }) {
   // Hide footer on admin dashboard to keep admin full-page
@@ -12,9 +13,9 @@ export default function Footer({ onNav }) {
     <footer className="site-footer">
       <div className="footer-grid">
         <div className="footer-col">
-          <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span>🧸</span> Look For Child Foundation
-          </h3>
+          <div className="footer-logo-container">
+            <img src={logoImg} alt="Look For Child Foundation" className="footer-logo" />
+          </div>
           <p>
             Dedicated to establishing a protective, healthy, and highly
             supportive social environment that enables underprivileged children to acquire 

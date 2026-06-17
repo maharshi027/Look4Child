@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import logoImg from "../assets/logo.png";
 
 export default function AdminLogin({ onLoginSuccess }) {
   const [email, setEmail] = useState("");
@@ -51,8 +52,7 @@ export default function AdminLogin({ onLoginSuccess }) {
         <div className="admin-login-card fade-in-up">
           {/* Logo Section */}
           <div className="login-logo-section">
-            <div className="login-icon-circle">🧸</div>
-            <h1>Look For Child Foundation</h1>
+            <img src={logoImg} alt="Look For Child Foundation" className="login-logo" />
             <h3 className="login-subtitle">Admin Login</h3>
           </div>
 

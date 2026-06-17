@@ -3,6 +3,7 @@ import "./index.css";
 import "./styles/admin-login.css";
 import "./styles/admin-dashboard.css";
 import Footer from "./components/footer/Footer";
+import logoImg from "./assets/logo.png";
 
 import OnlineDonation from "./components/OnlineDonation";
 import AdminLogin from "./admin/AdminLogin";
@@ -58,11 +59,7 @@ function App() {
       <header>
         <div className="nav-wrapper">
           <a href="#" className="logo" onClick={() => setActiveTab("home")}>
-            <div className="logo-icon">🧸</div>
-            <div className="logo-text">
-              <h1>Look4Child Foundation</h1>
-              <p>For Children's Protection, Education & Care</p>
-            </div>
+            <img src={logoImg} alt="Look4Child Foundation" className="logo-img" />
           </a>
           <nav>
             <ul>

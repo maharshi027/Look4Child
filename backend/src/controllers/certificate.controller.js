@@ -1,5 +1,11 @@
 import PDFDocument from "pdfkit";
 import Donation from "../models/donation.models.js";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const logoPath = path.join(__dirname, "../assets/logo.png");
 
 // Helper to format date as DD-MM-YYYY (e.g. 10-06-2026)
 const getTableDateStr = (date) => {
@@ -98,26 +104,14 @@ export const downloadCertificate = async (req, res) => {
     doc.text("45147/2025-26/L4C", 54, 52, { continued: true });
     doc.text("PAN : AAAAL4939Q", { align: "right" });
 
-    // --- LOGO (Look Child Foundation) ---
-    doc.y = 65;
-    doc
-      .font("Times-BoldItalic")
-      .fontSize(22)
-      .fillColor("#059669")
-      .text("Look ", { align: "center", continued: true });
-      
-    doc
-      .fillColor("#2563EB")
-      .text("child", { continued: true });
-      
-    doc
-      .font("Times-Roman")
-      .fontSize(9)
-      .fillColor("#4B5563")
-      .text("\nFoundation", { align: "center" });
+    // --- LOGO IMAGE (Look4Child Foundation) ---
+    const logoWidth = 130;
+    const logoHeight = 81;
+    const logoX = (width - logoWidth) / 2;
+    doc.image(logoPath, logoX, 55, { width: logoWidth, height: logoHeight });
 
     // --- CERTIFICATE OF DONATION TITLE ---
-    doc.moveDown(1.5);
+    doc.y = 148;
     doc
       .font("Times-Bold")
       .fontSize(26)
