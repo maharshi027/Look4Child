@@ -125,12 +125,7 @@ export const downloadTransactionReceipt = async (req, res) => {
       "Further queries will be welcomed by Look For Child Foundation on the following contacts:-",
       { lineGap: 3, width: contentWidth }
     );
-
-    // --- CONTACT DETAILS SINGLE LINE ---
-    doc.moveDown(0.5);
-    doc.font("Times-Bold").text("Contact NGO: ", { align: "center", continued: true });
-    doc.font("Times-Roman").text("Call: +91-9899818585  |  Email: info@look4child.ngo  |  Web: www.look4child.ngo", { align: "center" });
-
+    
     // --- WARM REGARDS ---
     doc.moveDown(0.8);
     doc.text("With Warm Regards,", pageMargin);
@@ -254,12 +249,6 @@ export const downloadTransactionReceipt = async (req, res) => {
       .fillColor("#0000FF")
       .font("Times-Roman")
       .fontSize(9.5);
-
-    doc.text("Click here to print your certificate.", {
-      align: "center",
-      underline: true,
-      link: certificateUrl,
-    });
 
     // --- FOOTER ADDRESS BLOCK ---
     const footerY = doc.page.height - 65;
