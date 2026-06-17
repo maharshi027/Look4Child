@@ -190,8 +190,23 @@ RAZORPAY_KEY_SECRET=your_razorpay_key_secret_here
 cd backend
 npm run dev
 
+<<<<<<< HEAD
 # Start frontend application (runs on http://localhost:5173)
 cd ../frontend
+=======
+# Production mode
+npm start
+
+# Server will run on http://localhost:XXXX
+```
+
+### Frontend Application
+
+```bash
+cd frontend
+
+# Development mode
+>>>>>>> 4c5ffdaf6d76bbf731f92d6492f1cf28a8cc22e5
 npm run dev
 
 # Build for production
@@ -322,9 +337,144 @@ curl -X GET http://localhost:5000/api/donations/all-records \
 
 ## ✨ Features
 
+<<<<<<< HEAD
 - **Double-Token Auth**: Clean JWT validation using access tokens (15-minute life) and refresh tokens (7-day life) with automated refresh requests.
 - **PDF Compilation**: Direct compilation of vectors and images using PDFKit to generate standard portrait receipts (single A4 page) and landscape certificates.
 - **Custom Design Tokens**: Curated layout styling using dynamic HSL color variables, smooth micro-interactions, and glassmorphism cards.
+=======
+- ✅ **JWT Authentication**: Secure token-based authentication with automatic refresh
+- ✅ **Access Control**: Separate access tokens (15m) and refresh tokens (7d)
+- ✅ **Donation Management**: Record and manage donations (online & cash)
+- ✅ **Payment Integration**: Secure Razorpay payment processing
+- ✅ **Certificate Generation**: Auto-generate PDF certificates for donors
+- ✅ **Admin Dashboard**: Secure admin panel with JWT protection
+- ✅ **Donor Tracking**: Complete donation history and records
+- ✅ **Responsive Design**: Works on desktop and mobile devices
+- ✅ **Error Handling**: Comprehensive error messages and logging with centralized error handler
+- ✅ **Security**: JWT-based authentication, input validation, environment-based configuration
+
+## 🔐 Security Best Practices
+
+1. **JWT Security**:
+   - Generate strong random JWT secrets: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+   - Change `JWT_ACCESS_TOKEN_SECRET` and `JWT_REFRESH_TOKEN_SECRET` in production
+   - Use HTTPS to prevent token interception
+   - Store tokens in httpOnly cookies in production (not localStorage)
+   - Implement token rotation strategy
+
+2. **Environment Variables**: Store all sensitive data in `.env`
+
+3. **API Keys**: Never commit API keys to version control
+
+4. **Database**: Use MongoDB Atlas with IP whitelisting in production
+
+5. **CORS**: Configure CORS properly for your domain
+
+6. **Validation**: Always validate user inputs on both frontend and backend
+
+7. **HTTPS**: Use HTTPS in production (required for httpOnly cookies)
+
+8. **.gitignore**: Ensure sensitive files are in `.gitignore`
+
+9. **Rate Limiting**: Implement rate limiting on authentication endpoints
+
+10. **Monitoring**: Monitor failed login attempts and suspicious activity
+
+## 📝 Available Scripts
+
+### Backend
+
+```bash
+npm start    # Production mode
+npm run dev  # Development mode with nodemon
+```
+
+### Frontend
+
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run preview  # Preview production build
+npm run lint     # Run ESLint
+```
+
+## 🐛 Troubleshooting
+
+### JWT Authentication Issues
+
+**Cannot login / "Invalid credentials" error**:
+
+- Verify admin password in `.env`
+- Check backend server is running on port XXXX
+- Verify request is going to `/api/auth/login` endpoint
+
+**401 Unauthorized on API calls**:
+
+- Check if access token exists: Open browser DevTools → Application → localStorage
+- Verify token is in valid JWT format
+- If expired , refresh token should auto-refresh
+- Check JWT secrets are configured in `.env`
+
+**Token refresh not working**:
+
+- Verify `refreshToken` exists in localStorage
+- Check `JWT_REFRESH_TOKEN_SECRET` is configured in `.env`
+- If refresh token older than 7 days, must re-login
+- Check backend is returning valid refresh token response
+
+**ECONNREFUSED error**:
+
+- Ensure backend is running: `npm run dev` in backend folder
+- Verify backend is on port XXXX (check `.env` PORT setting)
+- Check Vite proxy config in `frontend/vite.config.js`
+
+### MongoDB Connection Issues
+
+- Ensure MongoDB is running locally or MongoDB Atlas is accessible
+- Check `MONGODB_URI` in `.env`
+- Verify network access for MongoDB Atlas
+
+### Port Already in Use
+
+- Backend default: XXXX - Change `PORT` in `.env`
+- Frontend default: XXXX - Vite will use next available port
+
+## 📚 Additional Resources
+
+- [Express.js Documentation](https://expressjs.com/)
+- [React Documentation](https://react.dev/)
+- [MongoDB Documentation](https://docs.mongodb.com/)
+- [Razorpay Documentation](https://razorpay.com/docs/)
+- [Vite Documentation](https://vitejs.dev/)
+- [JWT (JSON Web Tokens) Guide](https://jwt.io/)
+- [JWT.io Debugger](https://jwt.io/#debugger) - Inspect your tokens
+- [Node.js Crypto Module](https://nodejs.org/api/crypto.html) - For generating secrets
+- [Backend JWT Documentation](./backend/JWT_AUTHENTICATION.md)
+- [Frontend JWT Integration Guide](./frontend/JWT_INTEGRATION_GUIDE.md)
+- [Complete Setup Guide](./SETUP_COMPLETE.md)
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the ISC License.
+
+## 👥 Authors
+
+- **Harshit** - Initial development
+
+## 📞 Support
+
+For questions or support, please contact the development team or create an issue in the repository.
+>>>>>>> 4c5ffdaf6d76bbf731f92d6492f1cf28a8cc22e5
 
 ---
 
