@@ -345,6 +345,7 @@ export const sendHtmlReceiptEmailInternal = async (donation) => {
           <!-- Logo & Header -->
           <tr>
             <td align="center" style="padding-bottom: 15px;">
+              <img src="cid:logo" alt="Look For Child Foundation Logo" style="width: 100px; height: auto; margin-bottom: 15px; display: block;" />
               <h2 style="color: #b91c1c; margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;">Look For Child Foundation</h2>
             </td>
           </tr>
@@ -465,6 +466,13 @@ export const sendHtmlReceiptEmailInternal = async (donation) => {
     to: donation.donorEmail,
     subject: `Donation Receipt - Look For Child Foundation`,
     html: htmlContent,
+    attachments: [
+      {
+        filename: "logo.png",
+        path: logoPath,
+        cid: "logo",
+      },
+    ],
   };
 
   await transporter.sendMail(mailOptions);

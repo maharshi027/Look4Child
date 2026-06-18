@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import logoImg from "../assets/logo.png";
 
 export default function OnlineDonation() {
   const [formData, setFormData] = useState({
@@ -41,14 +42,28 @@ export default function OnlineDonation() {
 
       fetchReceiptDetails();
 
-      // Automatically download certificate when transaction is successful
-      const downloadUrl = `${import.meta.env.VITE_APP_URL || "http://localhost:5000"}/api/certificate/download-certificate/${successData.donationId}`;
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.setAttribute("download", `Donation_Certificate_${successData.donationId}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Automatically download certificate as a blob when transaction is successful
+      const downloadCertificate = async () => {
+        try {
+          const response = await axios.get(
+            `/api/certificate/download-certificate/${successData.donationId}`,
+            { responseType: "blob" }
+          );
+          const blob = new Blob([response.data], { type: "application/pdf" });
+          const blobUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = blobUrl;
+          link.setAttribute("download", `Donation_Certificate_${successData.donationId}.pdf`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+          console.error("Auto-download failed:", error);
+        }
+      };
+
+      downloadCertificate();
     } else {
       setReceiptDetails(null);
     }
@@ -231,7 +246,15 @@ export default function OnlineDonation() {
           </p>
           <p className="success-details" style={{ fontSize: "0.9rem", color: "var(--text-light)" }}>
             Your transaction has been securely processed and recorded.
-            Your certificate is being downloaded automatically. If it didn't start, please click the button at the bottom of the receipt.
+            Your certificate is being downloaded automatically. If it didn't start, please{" "}
+            <a
+              href={`${import.meta.env.VITE_APP_URL || "http://localhost:5000"}/api/certificate/download-certificate/${successData.donationId}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ color: "var(--primary)", fontWeight: "bold", textDecoration: "underline" }}
+            >
+              click here to download certificate
+            </a>.
           </p>
 
           {loadingDetails ? (
@@ -241,8 +264,9 @@ export default function OnlineDonation() {
             </div>
           ) : receiptDetails ? (
             <div className="receipt-paper">
-              <div className="receipt-header">
-                <h3 className="receipt-logo-text">Look For Child Foundation</h3>
+              <div className="receipt-header" style={{ textAlign: "center", marginBottom: "1rem" }}>
+                <img src={logoImg} alt="Look For Child Foundation Logo" style={{ width: "100px", height: "auto", marginBottom: "0.5rem", display: "block", marginLeft: "auto", marginRight: "auto" }} />
+                <h3 className="receipt-logo-text" style={{ margin: "5px 0" }}>Look For Child Foundation</h3>
                 <p style={{ fontSize: "0.85rem", color: "#64748b", margin: 0, fontFamily: "sans-serif" }}>Project JEEVAN</p>
                 <div className="receipt-divider"></div>
               </div>
