@@ -220,7 +220,6 @@ export default function DonarList() {
                   <th>Contact & Address</th>
                   <th>Amount & Date</th>
                   <th>Payment Details</th>
-                  <th>Tax & Claim Info</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -267,16 +266,6 @@ export default function DonarList() {
                       >
                         {d.paymentStatus}
                       </span>
-                    </td>
-                    <td>
-                      {d.panNo && (
-                        <div className="donor-subinfo">PAN: {d.panNo}</div>
-                      )}
-                      {d.claimStatus && (
-                        <div className="donor-subinfo">
-                          Claim: {d.claimStatus}
-                        </div>
-                      )}
                     </td>
                     <td>
                       <div className="cms-actions">
