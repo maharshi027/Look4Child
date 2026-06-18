@@ -299,6 +299,29 @@ export const downloadTransactionReceipt = async (req, res) => {
   }
 };
 
+// Generate PDF receipt as Buffer for attachments
+export const generateReceiptPDFBuffer = async (donation) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const doc = new PDFDocument({
+        size: "A4",
+        layout: "portrait",
+        margins: { top: 30, bottom: 30, left: 45, right: 45 },
+      });
+
+      const buffers = [];
+      doc.on("data", (chunk) => buffers.push(chunk));
+      doc.on("end", () => resolve(Buffer.concat(buffers)));
+      doc.on("error", (err) => reject(err));
+
+      await generateReceiptPDF(doc, donation);
+      doc.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 // Create transporter for sending emails using SMTP credentials
 const createTransporter = () => {
   const host = process.env.SMTP_HOST || "smtp.gmail.com";
@@ -461,6 +484,19 @@ export const sendHtmlReceiptEmailInternal = async (donation) => {
 </div>
 `;
 
+  let pdfAttachment;
+  try {
+    const pdfBuffer = await generateReceiptPDFBuffer(donation);
+    const cleanDonorName = donation.donorName.replace(/[^a-zA-Z0-9]/g, "_");
+    pdfAttachment = {
+      filename: `Donation_Receipt_${cleanDonorName}.pdf`,
+      content: pdfBuffer,
+      contentType: "application/pdf"
+    };
+  } catch (pdfErr) {
+    console.error("Failed to generate PDF attachment for email:", pdfErr);
+  }
+
   const mailOptions = {
     from: `Look For Child Foundation <${process.env.SMTP_USER || process.env.ADMIN_EMAIL}>`,
     to: donation.donorEmail,
@@ -474,6 +510,10 @@ export const sendHtmlReceiptEmailInternal = async (donation) => {
       },
     ],
   };
+
+  if (pdfAttachment) {
+    mailOptions.attachments.push(pdfAttachment);
+  }
 
   await transporter.sendMail(mailOptions);
 };

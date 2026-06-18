@@ -1,6 +1,7 @@
 // src/donar/DonarList.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { downloadFile } from "../utils/downloadHelper";
 
 export default function DonarList() {
   const [donations, setDonations] = useState([]);
@@ -259,24 +260,28 @@ export default function DonarList() {
                       <div className="cms-actions">
                         {d.paymentStatus === "SUCCESS" ? (
                           <>
-                            <a
-                              href={`${import.meta.env.VITE_APP_URL}/api/receipt/download-receipt/${d._id}`}
+                            <button
+                              onClick={() => {
+                                const cleanName = d.donorName ? d.donorName.replace(/[^a-zA-Z0-9]/g, "_") : d._id;
+                                downloadFile(`/api/receipt/download-receipt/${d._id}`, `Donation_Receipt_${cleanName}.pdf`);
+                              }}
                               className="action-btn action-btn-receipt"
                               title="Download Transaction Receipt"
-                              target="_blank"
-                              rel="noreferrer"
+                              style={{ cursor: "pointer", background: "none", border: "none" }}
                             >
                               📄
-                            </a>
-                            <a
-                              href={`${import.meta.env.VITE_APP_URL}/api/certificate/download-certificate/${d._id}`}
+                            </button>
+                            <button
+                              onClick={() => {
+                                const cleanName = d.donorName ? d.donorName.replace(/[^a-zA-Z0-9]/g, "_") : d._id;
+                                downloadFile(`/api/certificate/download-certificate/${d._id}`, `Donation_Certificate_${cleanName}.pdf`);
+                              }}
                               className="action-btn action-btn-print"
                               title="Download Certificate"
-                              target="_blank"
-                              rel="noreferrer"
+                              style={{ cursor: "pointer", background: "none", border: "none" }}
                             >
                               🖨️
-                            </a>
+                            </button>
                           </>
                         ) : (
                           <>

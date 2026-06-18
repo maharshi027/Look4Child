@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { downloadFile } from "../utils/downloadHelper";
 
 export default function AdminCashEntry({ onRecordAdded }) {
   const [loading, setLoading] = useState(false);
@@ -133,24 +134,28 @@ export default function AdminCashEntry({ onRecordAdded }) {
             </p>
           </div>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-            <a
-              href={`${import.meta.env.VITE_APP_URL || "http://localhost:5000"}/api/receipt/download-receipt/${lastSaved.id}`}
+            <button
+              type="button"
+              onClick={() => {
+                const cleanName = lastSaved.name ? lastSaved.name.replace(/[^a-zA-Z0-9]/g, "_") : lastSaved.id;
+                downloadFile(`/api/receipt/download-receipt/${lastSaved.id}`, `Donation_Receipt_${cleanName}.pdf`);
+              }}
               className="action-btn-red"
-              style={{ textDecoration: "none", fontSize: "0.85rem", padding: "6px 12px", borderRadius: "4px" }}
-              target="_blank"
-              rel="noreferrer"
+              style={{ textDecoration: "none", fontSize: "0.85rem", padding: "6px 12px", borderRadius: "4px", border: "none", cursor: "pointer" }}
             >
               Generate Receipt
-            </a>
-            <a
-              href={`${import.meta.env.VITE_APP_URL || "http://localhost:5000"}/api/certificate/download-certificate/${lastSaved.id}`}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const cleanName = lastSaved.name ? lastSaved.name.replace(/[^a-zA-Z0-9]/g, "_") : lastSaved.id;
+                downloadFile(`/api/certificate/download-certificate/${lastSaved.id}`, `Donation_Certificate_${cleanName}.pdf`);
+              }}
               className="action-btn-blue"
-              style={{ textDecoration: "none", fontSize: "0.85rem", padding: "6px 12px", borderRadius: "4px" }}
-              target="_blank"
-              rel="noreferrer"
+              style={{ textDecoration: "none", fontSize: "0.85rem", padding: "6px 12px", borderRadius: "4px", border: "none", cursor: "pointer" }}
             >
               Generate Certificate
-            </a>
+            </button>
             <button
               type="button"
               onClick={async () => {

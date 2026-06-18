@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import logoImg from "../assets/logo.png";
+import { downloadFile } from "../utils/downloadHelper";
 
 export default function OnlineDonation() {
   const [formData, setFormData] = useState({
@@ -42,28 +43,15 @@ export default function OnlineDonation() {
 
       fetchReceiptDetails();
 
-      // Automatically download certificate as a blob when transaction is successful
-      const downloadCertificate = async () => {
-        try {
-          const response = await axios.get(
-            `/api/certificate/download-certificate/${successData.donationId}`,
-            { responseType: "blob" }
-          );
-          const blob = new Blob([response.data], { type: "application/pdf" });
-          const blobUrl = window.URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = blobUrl;
-          link.setAttribute("download", `Donation_Certificate_${successData.donationId}.pdf`);
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(blobUrl);
-        } catch (error) {
-          console.error("Auto-download failed:", error);
-        }
+      // Automatically download certificate when transaction is successful
+      const autoDownload = async () => {
+        await downloadFile(
+          `/api/certificate/download-certificate/${successData.donationId}`,
+          `Donation_Certificate_${successData.donationId}.pdf`
+        );
       };
 
-      downloadCertificate();
+      autoDownload();
     } else {
       setReceiptDetails(null);
     }
@@ -247,14 +235,28 @@ export default function OnlineDonation() {
           <p className="success-details" style={{ fontSize: "0.9rem", color: "var(--text-light)" }}>
             Your transaction has been securely processed and recorded.
             Your certificate is being downloaded automatically. If it didn't start, please{" "}
-            <a
-              href={`${import.meta.env.VITE_APP_URL || "http://localhost:5000"}/api/certificate/download-certificate/${successData.donationId}`}
-              target="_blank"
-              rel="noreferrer"
-              style={{ color: "var(--primary)", fontWeight: "bold", textDecoration: "underline" }}
+            <button
+              onClick={() => {
+                const cleanName = receiptDetails?.donorName ? receiptDetails.donorName.replace(/[^a-zA-Z0-9]/g, "_") : successData.donationId;
+                downloadFile(
+                  `/api/certificate/download-certificate/${successData.donationId}`,
+                  `Donation_Certificate_${cleanName}.pdf`
+                );
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--primary)",
+                fontWeight: "bold",
+                textDecoration: "underline",
+                cursor: "pointer",
+                padding: 0,
+                fontFamily: "inherit",
+                fontSize: "inherit"
+              }}
             >
               click here to download certificate
-            </a>.
+            </button>.
           </p>
 
           {loadingDetails ? (
@@ -377,19 +379,39 @@ export default function OnlineDonation() {
             </div>
           )}
 
-          <div className="receipt-actions">
-            <a
-              href={`${import.meta.env.VITE_APP_URL || "http://localhost:5000"}/api/certificate/download-certificate/${successData.donationId}`}
+          <div className="receipt-actions" style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap", marginTop: "1.5rem" }}>
+            <button
+              onClick={() => {
+                const cleanName = receiptDetails?.donorName ? receiptDetails.donorName.replace(/[^a-zA-Z0-9]/g, "_") : successData.donationId;
+                downloadFile(
+                  `/api/certificate/download-certificate/${successData.donationId}`,
+                  `Donation_Certificate_${cleanName}.pdf`
+                );
+              }}
               className="btn btn-certificate-download"
-              target="_blank"
-              rel="noreferrer"
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
             >
               🖨️ Download Certificate
-            </a>
+            </button>
+
+            <button
+              onClick={() => {
+                const cleanName = receiptDetails?.donorName ? receiptDetails.donorName.replace(/[^a-zA-Z0-9]/g, "_") : successData.donationId;
+                downloadFile(
+                  `/api/receipt/download-receipt/${successData.donationId}`,
+                  `Donation_Receipt_${cleanName}.pdf`
+                );
+              }}
+              className="btn btn-primary btn-receipt-download"
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", backgroundColor: "#dc2626", borderColor: "#dc2626" }}
+            >
+              📄 Download Receipt
+            </button>
             
             <button
               className="btn btn-secondary btn-new-donation-centered"
               onClick={() => setSuccessData(null)}
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
             >
               Make Another Donation
             </button>
