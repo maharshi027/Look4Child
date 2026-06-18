@@ -89,7 +89,7 @@ export const downloadCertificate = async (req, res) => {
     
     // Line 5: no. _______________ drawn _______________ dated _______________
     const refNo = donation.transactionId || donation.razorpayPaymentId || "--NA--";
-    doc.text(refNo, 200, 375, { width: 180, align: "left" });
+    doc.text(refNo, 180, 375, { width: 220, align: "left" });
     
     const drawnSource = (donation.gatewayName || (donation.paymentMode === "ONLINE" ? "GOOGLE PAY" : "OFFICE")).toUpperCase();
     doc.text(drawnSource, 380, 375, { width: 200, align: "left" });
