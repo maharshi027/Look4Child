@@ -76,25 +76,25 @@ export const downloadCertificate = async (req, res) => {
     doc.fillColor("#000000").font("Times-Bold").fontSize(11);
     
     // Donated Rs. Value (Line 3, Y = 315, X = 260)
-    doc.text(`${donation.amount}/-`, 260, 315, { width: 250, align: "left" });
+    doc.text(`${donation.amount}/-`, 260, 315, { width: 200, align: "left" });
     // PAN No Value (Line 3, Y = 315, X = 560)
     doc.text(donation.panNo || "N/A", 560, 315, { width: 250, align: "left" });
 
     // Line 4: For account of ___________ donated via __________ having reference no. __________
     const accountType = (donation.type || "HEALTH CARE").toUpperCase();
-    doc.text(accountType, 250, 345, { width: 250, align: "left" });
+    doc.text(accountType, 250, 345, { width: 200, align: "left" });
     
     const paymentModeLabel = donation.paymentMode === "CASH" ? (donation.gatewayName || "CASH").toUpperCase() : "NEFT/IMPS";
-    doc.text(paymentModeLabel, 510, 345, { width: 250, align: "left" });
+    doc.text(paymentModeLabel, 510, 345, { width: 200, align: "left" });
     
     // Line 5: no. _______________ drawn _______________ dated _______________
     const refNo = donation.transactionId || donation.razorpayPaymentId || "--NA--";
-    doc.text(refNo, 190, 375, { width: 250, align: "left" });
+    doc.text(refNo, 190, 375, { width: 200, align: "left" });
     
     const drawnSource = (donation.gatewayName || (donation.paymentMode === "ONLINE" ? "GOOGLE PAY" : "OFFICE")).toUpperCase();
-    doc.text(drawnSource, 380, 375, { width: 250, align: "left" });
+    doc.text(drawnSource, 380, 375, { width: 200, align: "left" });
     
-    doc.text(getTableDateStr(donation.donationDate), 520, 375, { width: 250, align: "left" });
+    doc.text(getTableDateStr(donation.donationDate), 520, 375, { width: 200, align: "left" });
 
     // End Document stream
     doc.end();
