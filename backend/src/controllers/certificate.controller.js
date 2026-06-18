@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const certificateBgPath = path.join(__dirname, "../assets/certificate_bg.png");
 
-// Helper to format date as DD-MM-YYYY (e.g. 10-06-2026)
+
 const getTableDateStr = (date) => {
   const d = new Date(date);
   const day = String(d.getDate()).padStart(2, "0");
@@ -17,9 +17,6 @@ const getTableDateStr = (date) => {
   return `${day}-${month}-${year}`;
 };
 
-// drawCertificateBorders function removed. Background image contains the pre-printed borders.
-
-// Generate and stream the certificate PDF
 export const downloadCertificate = async (req, res) => {
   const { id } = req.params;
 
@@ -69,14 +66,14 @@ export const downloadCertificate = async (req, res) => {
     doc.text(serialNumber, 60, 52);
 
     // --- DONOR NAME ---
-    doc.y = 230;
-    doc.font("Times-BoldItalic")
-       .fontSize(28)
-       .fillColor("#0E7490") // cyan-700
+    doc.y = 236;
+    doc.font("Times-Bold")
+       .fontSize(32)
+       .fillColor("#000000") // black colour
        .text(donation.donorName.toUpperCase(), { align: "center" });
 
     // --- DETAILS INPUT OVERLAYS ---
-    doc.fillColor("#1F2937").font("Times-BoldItalic").fontSize(11);
+    doc.fillColor("#000000").font("Times-Bold").fontSize(11);
     
     // Donated Rs. Value (Line 3, Y = 315, X = 260)
     doc.text(`${donation.amount}/-`, 260, 315, { width: 200, align: "left" });

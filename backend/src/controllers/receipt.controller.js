@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const letterheadPath = path.join(__dirname, "../assets/letterhead.jpg");
+const logoPath = path.join(__dirname, "../assets/logo.png");
 
 // Helper to format date as DD-MMM-YYYY (e.g. 10-Jun-2026)
 const getReceiptDateStr = (date) => {
@@ -58,13 +58,25 @@ export const generateReceiptPDF = async (doc, donation) => {
   const pageMargin = 45;
   const contentWidth = width - 2 * pageMargin;
 
-  // --- DRAW BACKGROUND LETTERHEAD ---
-  doc.image(letterheadPath, 0, 0, { width, height });
+  // --- LETTERHEAD LOGO IMAGE ---
+  const logoWidth = 100;
+  const logoHeight = 63;
+  const logoX = (width - logoWidth) / 2;
+  doc.image(logoPath, logoX, 30, { width: logoWidth, height: logoHeight });
+
+  // Crimson colored line separator under the logo
+  const lineY = 105;
+  doc
+    .lineWidth(1.5)
+    .strokeColor("#B91C1C")
+    .moveTo(pageMargin, lineY)
+    .lineTo(width - pageMargin, lineY)
+    .stroke();
 
   // --- TOP REFERENCE & DATE ---
   const receiptDateStr = getReceiptDateStr(donation.donationDate);
   const serialNumber = await getReceiptSerialNumber(donation);
-  const refY = 130;
+  const refY = lineY + 10;
   
   doc
     .fillColor("#000000")
@@ -222,6 +234,24 @@ export const generateReceiptPDF = async (doc, donation) => {
 
   doc.text("For: Look4Child Foundation.", pageMargin, currentY + 10, { continued: true });
   doc.text("PAN: AAAAL4939Q", { align: "right" });
+
+  // --- FOOTER ADDRESS BLOCK ---
+  const footerY = doc.page.height - 65;
+
+  // Draw thin separator line for footer
+  doc
+    .lineWidth(0.5)
+    .strokeColor("#D1D5DB")
+    .moveTo(pageMargin, footerY - 10)
+    .lineTo(width - pageMargin, footerY - 10)
+    .stroke();
+
+  doc
+    .font("Times-Roman")
+    .fontSize(8)
+    .fillColor("#4B5563")
+    .text("Regd. Office: Room No.1, Opp. Sarpanch Anant House, Tigra Village, Sec-57, Gurgaon", pageMargin, footerY, { align: "center", lineGap: 1.5, width: contentWidth })
+    .text("Phone: +91 98998 18585  |  Email: info@look4child.ngo  |  Web: www.look4child.ngo", { align: "center", width: contentWidth });
 };
 
 // Generate and stream the transaction receipt PDF
