@@ -5,7 +5,7 @@ import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const logoPath = path.join(__dirname, "../assets/logo.png");
+const letterheadPath = path.join(__dirname, "../assets/letterhead.jpg");
 
 // Helper to format date as DD-MMM-YYYY (e.g. 10-Jun-2026)
 const getReceiptDateStr = (date) => {
@@ -60,27 +60,16 @@ export const downloadTransactionReceipt = async (req, res) => {
     doc.pipe(res);
 
     const width = doc.page.width;
+    const height = doc.page.height;
     const pageMargin = 45;
     const contentWidth = width - 2 * pageMargin;
 
-    // --- LETTERHEAD LOGO IMAGE ---
-    const logoWidth = 100;
-    const logoHeight = 63;
-    const logoX = (width - logoWidth) / 2;
-    doc.image(logoPath, logoX, 30, { width: logoWidth, height: logoHeight });
-
-    // Crimson colored line separator under the logo
-    const lineY = 105;
-    doc
-      .lineWidth(1.5)
-      .strokeColor("#B91C1C")
-      .moveTo(pageMargin, lineY)
-      .lineTo(width - pageMargin, lineY)
-      .stroke();
+    // --- DRAW BACKGROUND LETTERHEAD ---
+    doc.image(letterheadPath, 0, 0, { width, height });
 
     // --- TOP REFERENCE & DATE ---
     const receiptDateStr = getReceiptDateStr(donation.donationDate);
-    const refY = lineY + 10;
+    const refY = 130;
     
     doc
       .fillColor("#000000")
@@ -92,7 +81,7 @@ export const downloadTransactionReceipt = async (req, res) => {
     doc.text(receiptDateStr, { align: "right" });
 
     // --- TO ADDRESS BLOCK ---
-    doc.y = refY + 15;
+    doc.y = refY + 20;
     doc.font("Times-Roman").fontSize(9.5);
     doc.text("To,");
     doc.text(donation.donorName);
@@ -125,7 +114,6 @@ export const downloadTransactionReceipt = async (req, res) => {
       "Further queries will be welcomed by Look For Child Foundation on the following contacts:-",
       { lineGap: 3, width: contentWidth }
     );
-    
     // --- WARM REGARDS ---
     doc.moveDown(0.8);
     doc.text("With Warm Regards,", pageMargin);
@@ -243,30 +231,6 @@ export const downloadTransactionReceipt = async (req, res) => {
     // --- DOWNLOAD CERTIFICATE LINK ---
     const appUrl = process.env.VITE_APP_URL || "http://localhost:5000";
     const certificateUrl = `${appUrl}/api/certificate/download-certificate/${donation._id}`;
-
-    doc.y = currentY + 30;
-    doc
-      .fillColor("#0000FF")
-      .font("Times-Roman")
-      .fontSize(9.5);
-
-    // --- FOOTER ADDRESS BLOCK ---
-    const footerY = doc.page.height - 65;
-
-    // Draw thin separator line for footer
-    doc
-      .lineWidth(0.5)
-      .strokeColor("#D1D5DB")
-      .moveTo(pageMargin, footerY - 10)
-      .lineTo(width - pageMargin, footerY - 10)
-      .stroke();
-
-    doc
-      .font("Times-Roman")
-      .fontSize(8)
-      .fillColor("#4B5563")
-      .text("Regd. Office: Room No.1, Opp. Sarpanch Anant House, Tigra Village, Sec-57, Gurgaon", pageMargin, footerY, { align: "center", lineGap: 1.5, width: contentWidth })
-      .text("Phone: +91 98998 18585  |  Email: info@look4child.ngo  |  Web: www.look4child.ngo", { align: "center", width: contentWidth });
 
     // End Document stream
     doc.end();
