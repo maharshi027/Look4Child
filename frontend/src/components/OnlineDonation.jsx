@@ -274,13 +274,7 @@ export default function OnlineDonation() {
               </div>
 
               <div className="receipt-meta">
-                <span>Ref No: {
-                  receiptDetails.transactionId && receiptDetails.transactionId.startsWith("TXN")
-                    ? "L4C-" + receiptDetails.transactionId.substring(3)
-                    : receiptDetails.transactionId && !receiptDetails.transactionId.startsWith("L4C-")
-                    ? "L4C-" + receiptDetails.transactionId
-                    : receiptDetails.transactionId || "N/A"
-                }</span>
+                <span>Ref No: {receiptDetails.receiptNumber}</span>
                 <span>Date: {new Date(receiptDetails.donationDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).replace(/ /g, "-")}</span>
               </div>
 
@@ -310,13 +304,7 @@ export default function OnlineDonation() {
                 <tbody>
                   <tr>
                     <th>Donation Number:</th>
-                    <td>{
-                      receiptDetails.transactionId && receiptDetails.transactionId.startsWith("TXN")
-                        ? "L4C-" + receiptDetails.transactionId.substring(3)
-                        : receiptDetails.transactionId && !receiptDetails.transactionId.startsWith("L4C-")
-                        ? "L4C-" + receiptDetails.transactionId
-                        : receiptDetails.transactionId || "N/A"
-                    }</td>
+                    <td>{receiptDetails.receiptNumber}</td>
                   </tr>
                   <tr>
                     <th>Donation Date:</th>

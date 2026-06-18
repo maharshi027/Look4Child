@@ -3,6 +3,7 @@ import Donation from "../models/donation.models.js";
 import { fileURLToPath } from "url";
 import path from "path";
 import nodemailer from "nodemailer";
+import { generateCertificatePDFBuffer } from "./certificate.controller.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -134,14 +135,8 @@ export const generateReceiptPDF = async (doc, donation) => {
     .fontSize(10)
     .text("Donation Details", { align: "center", underline: true });
 
-  // Format donation number to match Image 1 L4C-[uniqueCode]
-  let donationNumber = donation.transactionId;
-  if (donationNumber && donationNumber.startsWith("TXN")) {
-    donationNumber = donationNumber.substring(3);
-  }
-  if (donationNumber && !donationNumber.startsWith("L4C-")) {
-    donationNumber = `L4C-${donationNumber}`;
-  }
+  // Use sequential serial number for the Donation Number
+  const donationNumber = serialNumber;
 
   const tableDateStr = getTableDateStr(donation.donationDate);
   const donationStatus = donation.paymentStatus === "SUCCESS" ? "Paid" : donation.paymentStatus;
@@ -347,14 +342,8 @@ export const sendHtmlReceiptEmailInternal = async (donation) => {
   const tableDateStr = getTableDateStr(donation.donationDate);
   const donationStatus = donation.paymentStatus === "SUCCESS" ? "Paid" : donation.paymentStatus;
 
-  // Format donation number to match Image 1 L4C-[uniqueCode]
-  let donationNumber = donation.transactionId;
-  if (donationNumber && donationNumber.startsWith("TXN")) {
-    donationNumber = donationNumber.substring(3);
-  }
-  if (donationNumber && !donationNumber.startsWith("L4C-")) {
-    donationNumber = `L4C-${donationNumber}`;
-  }
+  // Use sequential serial number for the Donation Number
+  const donationNumber = serialNumber;
 
   const paymentMode = (donation.gatewayName || donation.paymentMode || "CASH").toUpperCase();
   const transporter = createTransporter();
@@ -494,23 +483,23 @@ export const sendHtmlReceiptEmailInternal = async (donation) => {
 </div>
 `;
 
-  let pdfAttachment;
+  let certificateAttachment;
   try {
-    const pdfBuffer = await generateReceiptPDFBuffer(donation);
+    const certBuffer = await generateCertificatePDFBuffer(donation);
     const cleanDonorName = donation.donorName.replace(/[^a-zA-Z0-9]/g, "_");
-    pdfAttachment = {
-      filename: `Donation_Receipt_${cleanDonorName}.pdf`,
-      content: pdfBuffer,
+    certificateAttachment = {
+      filename: `Donation_Certificate_${cleanDonorName}.pdf`,
+      content: certBuffer,
       contentType: "application/pdf"
     };
-  } catch (pdfErr) {
-    console.error("Failed to generate PDF attachment for email:", pdfErr);
+  } catch (certErr) {
+    console.error("Failed to generate Certificate attachment for email:", certErr);
   }
 
   const mailOptions = {
     from: `Look For Child Foundation <${process.env.SMTP_USER || process.env.ADMIN_EMAIL}>`,
     to: donation.donorEmail,
-    subject: `Donation Receipt - Look For Child Foundation`,
+    subject: `Donation Certificate & Receipt - Look For Child Foundation`,
     html: htmlContent,
     attachments: [
       {
@@ -521,8 +510,8 @@ export const sendHtmlReceiptEmailInternal = async (donation) => {
     ],
   };
 
-  if (pdfAttachment) {
-    mailOptions.attachments.push(pdfAttachment);
+  if (certificateAttachment) {
+    mailOptions.attachments.push(certificateAttachment);
   }
 
   await transporter.sendMail(mailOptions);

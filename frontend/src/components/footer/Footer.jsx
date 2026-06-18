@@ -43,7 +43,10 @@ export default function Footer({ onNav }) {
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  onNav?.("work");
+                  onNav?.("home");
+                  setTimeout(() => {
+                    document.getElementById("core-programs")?.scrollIntoView({ behavior: "smooth" });
+                  }, 100);
                 }}
               >
                 Our Programs

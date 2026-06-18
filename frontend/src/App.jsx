@@ -71,14 +71,7 @@ function App() {
                   Home
                 </button>
               </li>
-              <li>
-                <button
-                  className={`nav-btn ${activeTab === "work" ? "active" : ""}`}
-                  onClick={() => setActiveTab("work")}
-                >
-                  Our Work
-                </button>
-              </li>
+
               <li>
                 <button
                   className={`nav-btn ${activeTab === "admin" ? "active" : ""}`}
@@ -123,7 +116,9 @@ function App() {
                   </button>
                   <button
                     className="btn btn-secondary"
-                    onClick={() => setActiveTab("work")}
+                    onClick={() => {
+                      document.getElementById("core-programs")?.scrollIntoView({ behavior: "smooth" });
+                    }}
                   >
                     Explore Our Initiatives
                   </button>
@@ -178,7 +173,7 @@ function App() {
             </section>
 
             {/* Showcase Programs */}
-            <section style={{ marginTop: "4rem" }}>
+            <section id="core-programs" style={{ marginTop: "4rem" }}>
               <div className="section-header">
                 <h2>Our Core Programs</h2>
                 <p>

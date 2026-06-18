@@ -1,7 +1,7 @@
 import Donation from "../models/donation.models.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
-import { sendHtmlReceiptEmailInternal } from "./receipt.controller.js";
+import { sendHtmlReceiptEmailInternal, getReceiptSerialNumber } from "./receipt.controller.js";
 
 // Initiate an online donation order
 export const initiateOnline = async (req, res) => {
@@ -138,11 +138,10 @@ export const verifyOnline = async (req, res) => {
       donation.razorpaySignature = razorpay_signature || "mock_signature";
       await donation.save();
 
-      try {
-        await sendHtmlReceiptEmailInternal(donation);
-      } catch (emailError) {
-        console.error("Auto-email receipt failed for simulated donation:", emailError);
-      }
+      // Send email asynchronously in the background so it doesn't block the API response
+      sendHtmlReceiptEmailInternal(donation).catch((emailError) => {
+        console.error("Auto-email receipt failed in background for simulated donation:", emailError);
+      });
 
       return res.status(200).json({
         success: true,
@@ -175,11 +174,10 @@ export const verifyOnline = async (req, res) => {
       donation.razorpaySignature = razorpay_signature;
       await donation.save();
 
-      try {
-        await sendHtmlReceiptEmailInternal(donation);
-      } catch (emailError) {
-        console.error("Auto-email receipt failed for verified donation:", emailError);
-      }
+      // Send email asynchronously in the background so it doesn't block the API response
+      sendHtmlReceiptEmailInternal(donation).catch((emailError) => {
+        console.error("Auto-email receipt failed in background for verified donation:", emailError);
+      });
 
       return res.status(200).json({
         success: true,
@@ -413,11 +411,14 @@ export const generateTransactionReceipt = async (req, res) => {
       });
     }
 
+    const receiptNumber = await getReceiptSerialNumber(donation);
+
     // Return receipt data that will be used to generate PDF on frontend
     res.status(200).json({
       success: true,
       receipt: {
         transactionId: donation.transactionId,
+        receiptNumber: receiptNumber,
         donorName: donation.donorName,
         donorEmail: donation.donorEmail,
         donorPhone: donation.donorPhone,
