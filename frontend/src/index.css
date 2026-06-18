@@ -1440,3 +1440,133 @@ main.admin-fullpage {
     font-size: 2.25rem !important;
   }
 }
+
+/* ============================================================================
+   Inline Receipt Paper Styling (Payment Success)
+   ============================================================================ */
+.receipt-paper {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  padding: 2.5rem;
+  max-width: 650px;
+  margin: 2rem auto;
+  position: relative;
+  font-family: "Times New Roman", Times, serif;
+  color: #1e293b;
+  text-align: left;
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.receipt-logo-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #b91c1c; /* Crimson color matching Look For Child receipt */
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.receipt-divider {
+  border: 1px solid #b91c1c;
+  margin: 1rem 0;
+}
+
+.receipt-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.receipt-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.receipt-table th, .receipt-table td {
+  border: 1px solid #cbd5e1;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.receipt-table th {
+  background-color: #f8fafc;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.receipt-table td {
+  color: #334155;
+}
+
+.receipt-amount {
+  font-weight: 800;
+  color: #b91c1c;
+  font-size: 1.1rem;
+}
+
+.receipt-footer-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.receipt-office-footer {
+  border-top: 1px dashed #cbd5e1;
+  padding-top: 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.receipt-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-certificate-download {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 0.85rem 2rem;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "Outfit", sans-serif;
+  transition: var(--transition);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-certificate-download:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+}
+
+.btn-new-donation-centered {
+  margin-top: 1rem;
+}

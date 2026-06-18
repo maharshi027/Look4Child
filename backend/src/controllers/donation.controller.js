@@ -1,6 +1,7 @@
 import Donation from "../models/donation.models.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
+import { sendHtmlReceiptEmailInternal } from "./receipt.controller.js";
 
 // Initiate an online donation order
 export const initiateOnline = async (req, res) => {
@@ -137,6 +138,12 @@ export const verifyOnline = async (req, res) => {
       donation.razorpaySignature = razorpay_signature || "mock_signature";
       await donation.save();
 
+      try {
+        await sendHtmlReceiptEmailInternal(donation);
+      } catch (emailError) {
+        console.error("Auto-email receipt failed for simulated donation:", emailError);
+      }
+
       return res.status(200).json({
         success: true,
         message: "Simulated donation verified successfully",
@@ -167,6 +174,12 @@ export const verifyOnline = async (req, res) => {
       donation.razorpayPaymentId = razorpay_payment_id;
       donation.razorpaySignature = razorpay_signature;
       await donation.save();
+
+      try {
+        await sendHtmlReceiptEmailInternal(donation);
+      } catch (emailError) {
+        console.error("Auto-email receipt failed for verified donation:", emailError);
+      }
 
       return res.status(200).json({
         success: true,

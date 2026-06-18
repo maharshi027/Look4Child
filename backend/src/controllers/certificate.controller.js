@@ -6,7 +6,7 @@ import { getReceiptSerialNumber } from "./receipt.controller.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const certificateBgPath = path.join(__dirname, "../assets/certificate_bg.png");
+const certificateBgPath = path.join(__dirname, "../assets/certificate.jpeg");
 
 
 const getTableDateStr = (date) => {

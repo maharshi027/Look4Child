@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const logoPath = path.join(__dirname, "../assets/logo.png");
 
 // Helper to format date as DD-MMM-YYYY (e.g. 10-Jun-2026)
-const getReceiptDateStr = (date) => {
+export const getReceiptDateStr = (date) => {
   const d = new Date(date);
   const day = String(d.getDate()).padStart(2, "0");
   const months = [
@@ -22,7 +22,7 @@ const getReceiptDateStr = (date) => {
 };
 
 // Helper to format date as DD-MM-YYYY (e.g. 10-06-2026)
-const getTableDateStr = (date) => {
+export const getTableDateStr = (date) => {
   const d = new Date(date);
   const day = String(d.getDate()).padStart(2, "0");
   const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -317,7 +317,160 @@ const createTransporter = () => {
   });
 };
 
-// Generate and email the receipt to the donor
+// Generate and email the receipt to the donor using beautiful HTML format
+export const sendHtmlReceiptEmailInternal = async (donation) => {
+  const serialNumber = await getReceiptSerialNumber(donation);
+  const receiptDateStr = getReceiptDateStr(donation.donationDate);
+  const tableDateStr = getTableDateStr(donation.donationDate);
+  const donationStatus = donation.paymentStatus === "SUCCESS" ? "Paid" : donation.paymentStatus;
+
+  // Format donation number to match Image 1 L4C-[uniqueCode]
+  let donationNumber = donation.transactionId;
+  if (donationNumber && donationNumber.startsWith("TXN")) {
+    donationNumber = donationNumber.substring(3);
+  }
+  if (donationNumber && !donationNumber.startsWith("L4C-")) {
+    donationNumber = `L4C-${donationNumber}`;
+  }
+
+  const paymentMode = (donation.gatewayName || donation.paymentMode || "CASH").toUpperCase();
+  const transporter = createTransporter();
+
+  const htmlContent = `
+<div style="font-family: 'Times New Roman', Times, serif; color: #333333; margin: 0; padding: 20px; background-color: #f9f9f9;">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f9f9f9; padding: 20px 0;">
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" width="600" style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 40px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+          <!-- Logo & Header -->
+          <tr>
+            <td align="center" style="padding-bottom: 15px;">
+              <h2 style="color: #b91c1c; margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;">Look For Child Foundation</h2>
+            </td>
+          </tr>
+          <!-- Crimson Line -->
+          <tr>
+            <td style="border-bottom: 2px solid #b91c1c; padding-bottom: 10px;"></td>
+          </tr>
+          <!-- Serial Number & Date -->
+          <tr>
+            <td style="padding-top: 15px; padding-bottom: 20px;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td align="left" style="font-size: 13px; font-weight: bold; color: #555555;">
+                    ${serialNumber}
+                  </td>
+                  <td align="right" style="font-size: 13px; font-weight: bold; color: #555555;">
+                    Date: ${receiptDateStr}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- Salutation & Body -->
+          <tr>
+            <td style="font-size: 14px; line-height: 1.6; color: #333333; padding-bottom: 20px;">
+              <p>To,<br><strong>${donation.donorName}</strong><br>${donation.donorAddress}</p>
+              <p>Dear Sir/Madam,</p>
+              <p>This is to inform you that your donation has been successfully received.</p>
+              <p>We at Look4Child Foundation show our absolute gratitude towards the donation made by you for saving the life of a child. Efforts made by you and us will surely bring bright change in one's life.</p>
+              <p>Thanks for being a part of our project JEEVAN. Indeed it feels great to be a reason for others smiles.</p>
+              <p>With Warm Regards,<br><strong>Team Look For Child Foundation.</strong></p>
+            </td>
+          </tr>
+          <!-- Table Header -->
+          <tr>
+            <td align="center" style="font-size: 16px; font-weight: bold; text-decoration: underline; padding-bottom: 15px;">
+              Donation Details
+            </td>
+          </tr>
+          <!-- Table -->
+          <tr>
+            <td>
+              <table cellpadding="8" cellspacing="0" border="1" width="100%" style="border-collapse: collapse; border-color: #d1d5db; font-size: 13px;">
+                <tr>
+                  <td width="35%" style="background-color: #f3f4f6; font-weight: bold;">Donation Number:</td>
+                  <td>${donationNumber}</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f3f4f6; font-weight: bold;">Donation Date:</td>
+                  <td>${tableDateStr}</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f3f4f6; font-weight: bold;">Donation Status:</td>
+                  <td style="color: #10B981; font-weight: bold;">${donationStatus}</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f3f4f6; font-weight: bold;">Received with thanks from:</td>
+                  <td>${donation.donorName}</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f3f4f6; font-weight: bold;">Address:</td>
+                  <td>${donation.donorAddress}</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f3f4f6; font-weight: bold;">E-mail:</td>
+                  <td>${donation.donorEmail}</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f3f4f6; font-weight: bold;">PAN No:</td>
+                  <td>${donation.panNo || "N/A"}</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f3f4f6; font-weight: bold;">Phone Number:</td>
+                  <td>${donation.donorPhone}</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f3f4f6; font-weight: bold;">Payment Mode:</td>
+                  <td>${paymentMode}</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f3f4f6; font-weight: bold;">Reference Number:</td>
+                  <td>${donation.transactionId || "N/A"}</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f3f4f6; font-weight: bold;">Amount:</td>
+                  <td style="font-weight: bold; color: #b91c1c;">INR ${donation.amount}/-</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- PAN Details -->
+          <tr>
+            <td style="padding-top: 15px; font-size: 13px; font-weight: bold;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td align="left">For: Look4Child Foundation.</td>
+                  <td align="right">PAN: AAAAL4939Q</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- Footer Address -->
+          <tr>
+            <td style="border-top: 1px solid #d1d5db; margin-top: 30px; padding-top: 15px; font-size: 11px; color: #4b5563; text-align: center; line-height: 1.5;">
+              Regd. Office: Room No.1, Opp. Sarpanch Anant House, Tigra Village, Sec-57, Gurgaon<br>
+              Phone: +91 98998 18585 | Email: info@look4child.ngo | Web: www.look4child.ngo
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+`;
+
+  const mailOptions = {
+    from: `Look For Child Foundation <${process.env.SMTP_USER || process.env.ADMIN_EMAIL}>`,
+    to: donation.donorEmail,
+    subject: `Donation Receipt - Look For Child Foundation`,
+    html: htmlContent,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+// Generate and email the receipt to the donor (API route wrapper)
 export const emailTransactionReceipt = async (req, res) => {
   const { id } = req.params;
 
@@ -330,56 +483,7 @@ export const emailTransactionReceipt = async (req, res) => {
       });
     }
 
-    // Generate the PDF into a buffer
-    const doc = new PDFDocument({
-      size: "A4",
-      layout: "portrait",
-      margins: { top: 30, bottom: 30, left: 45, right: 45 },
-    });
-
-    const chunks = [];
-    doc.on("data", (chunk) => chunks.push(chunk));
-    
-    const pdfBufferPromise = new Promise((resolve, reject) => {
-      doc.on("end", () => resolve(Buffer.concat(chunks)));
-      doc.on("error", (err) => reject(err));
-    });
-
-    // Draw the PDF receipt
-    await generateReceiptPDF(doc, donation);
-    doc.end();
-
-    const pdfBuffer = await pdfBufferPromise;
-
-    // Create transporter
-    const transporter = createTransporter();
-
-    const cleanDonorName = donation.donorName.replace(/[^a-zA-Z0-9]/g, "_");
-    const filename = `Donation Receipt_${cleanDonorName}.pdf`;
-
-    // Mail options
-    const mailOptions = {
-      from: `Look For Child Foundation <${process.env.SMTP_USER || process.env.ADMIN_EMAIL}>`,
-      to: donation.donorEmail,
-      subject: `Donation Receipt - Look For Child Foundation`,
-      text: `Dear ${donation.donorName},
-
-Thank you for your generous contribution of INR ${donation.amount}/- to Look For Child Foundation.
-
-Please find attached your donation transaction receipt.
-
-With Warm Regards,
-Team Look For Child Foundation.`,
-      attachments: [
-        {
-          filename: filename,
-          content: pdfBuffer,
-          contentType: "application/pdf",
-        },
-      ],
-    };
-
-    await transporter.sendMail(mailOptions);
+    await sendHtmlReceiptEmailInternal(donation);
 
     res.status(200).json({
       success: true,

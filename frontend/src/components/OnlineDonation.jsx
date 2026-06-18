@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function OnlineDonation() {
@@ -14,10 +14,45 @@ export default function OnlineDonation() {
   const [selectedPreset, setSelectedPreset] = useState(null);
   const [errors, setErrors] = useState({});
   const [successData, setSuccessData] = useState(null);
+  const [receiptDetails, setReceiptDetails] = useState(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
 
   // Simulation state
   const [simulationData, setSimulationData] = useState(null);
   const [showSimModal, setShowSimModal] = useState(false);
+
+  useEffect(() => {
+    if (successData?.donationId) {
+      const fetchReceiptDetails = async () => {
+        setLoadingDetails(true);
+        try {
+          const { data } = await axios.get(
+            `/api/receipt/receipt-details/${successData.donationId}`
+          );
+          if (data.success) {
+            setReceiptDetails(data.receipt);
+          }
+        } catch (error) {
+          console.error("Error fetching receipt details:", error);
+        } finally {
+          setLoadingDetails(false);
+        }
+      };
+
+      fetchReceiptDetails();
+
+      // Automatically download certificate when transaction is successful
+      const downloadUrl = `${import.meta.env.VITE_APP_URL || "http://localhost:5000"}/api/certificate/download-certificate/${successData.donationId}`;
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.setAttribute("download", `Donation_Certificate_${successData.donationId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      setReceiptDetails(null);
+    }
+  }, [successData]);
 
   const presetAmounts = [250, 500, 1000, 2500, 5000];
 
@@ -187,41 +222,154 @@ export default function OnlineDonation() {
   // Success screen with download options
   if (successData) {
     return (
-      <div className="success-screen fade-in">
-        <div className="success-card">
-          <div className="success-icon">🎉</div>
+      <div className="success-screen fade-in" style={{ textAlign: "center" }}>
+        <div style={{ maxWidth: "680px", margin: "0 auto", padding: "1rem" }}>
+          <div className="success-icon" style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>🎉</div>
           <h2>Payment Successful!</h2>
-          <p>Thank you for your generous contribution to Look For Child Foundation.</p>
-          <p className="success-details">
+          <p style={{ color: "var(--text-light)", marginBottom: "1rem" }}>
+            Thank you for your generous contribution to Look For Child Foundation.
+          </p>
+          <p className="success-details" style={{ fontSize: "0.9rem", color: "var(--text-light)" }}>
             Your transaction has been securely processed and recorded.
+            Your certificate is being downloaded automatically. If it didn't start, please click the button at the bottom of the receipt.
           </p>
 
-          <div className="download-actions" style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1.5rem" }}>
-            <a
-              href={`${import.meta.env.VITE_APP_URL}/api/receipt/download-receipt/${successData.donationId}`}
-              className="btn btn-download-receipt"
-              target="_blank"
-              rel="noreferrer"
-            >
-              📄 Download Donation Receipt
-            </a>
-            <a
-              href={`${import.meta.env.VITE_APP_URL}/api/certificate/download-certificate/${successData.donationId}`}
-              className="btn btn-download-certificate"
-              target="_blank"
-              rel="noreferrer"
-            >
-              🖨️ Download Exemption Certificate
-            </a>
-          </div>
+          {loadingDetails ? (
+            <div style={{ padding: "3rem", textAlign: "center", color: "var(--text-light)" }}>
+              <div className="spinner" style={{ margin: "0 auto 1rem auto", width: "40px", height: "40px", border: "4px solid rgba(0,0,0,0.1)", borderLeftColor: "var(--primary)", borderRadius: "50%" }}></div>
+              Loading Receipt Details...
+            </div>
+          ) : receiptDetails ? (
+            <div className="receipt-paper">
+              <div className="receipt-header">
+                <h3 className="receipt-logo-text">Look For Child Foundation</h3>
+                <p style={{ fontSize: "0.85rem", color: "#64748b", margin: 0, fontFamily: "sans-serif" }}>Project JEEVAN</p>
+                <div className="receipt-divider"></div>
+              </div>
 
-          <button
-            className="btn btn-new-donation"
-            style={{ marginTop: "1.5rem" }}
-            onClick={() => setSuccessData(null)}
-          >
-            Make Another Donation
-          </button>
+              <div className="receipt-meta">
+                <span>Ref No: {
+                  receiptDetails.transactionId && receiptDetails.transactionId.startsWith("TXN")
+                    ? "L4C-" + receiptDetails.transactionId.substring(3)
+                    : receiptDetails.transactionId && !receiptDetails.transactionId.startsWith("L4C-")
+                    ? "L4C-" + receiptDetails.transactionId
+                    : receiptDetails.transactionId || "N/A"
+                }</span>
+                <span>Date: {new Date(receiptDetails.donationDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).replace(/ /g, "-")}</span>
+              </div>
+
+              <div className="receipt-body">
+                <p>To,</p>
+                <p><strong>{receiptDetails.donorName}</strong></p>
+                <p style={{ whiteSpace: "pre-line", maxWidth: "320px", margin: 0 }}>{receiptDetails.donorAddress}</p>
+                
+                <p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>Dear Sir/Madam,</p>
+                <p style={{ textIndent: "1.5rem", margin: "0.5rem 0" }}>
+                  This is to inform you that your donation has been successfully received.
+                </p>
+                <p style={{ textIndent: "1.5rem", margin: "0.5rem 0" }}>
+                  We at Look4Child Foundation show our absolute gratitude towards the donation made by you for saving a life of a child. Efforts made by you and us will surely bring bright change in one's life.
+                </p>
+                <p style={{ textIndent: "1.5rem", margin: "0.5rem 0" }}>
+                  Thanks for being a part of our project JEEVAN. Indeed it feels great to be a reason for others smiles.
+                </p>
+                
+                <p style={{ marginTop: "1.25rem", marginBottom: 0 }}>With Warm Regards,</p>
+                <p><strong>Team Look For Child Foundation.</strong></p>
+              </div>
+
+              <h4 style={{ textAlign: "center", textDecoration: "underline", margin: "1.5rem 0 0.75rem 0", fontFamily: "Times-Bold", fontSize: "1.05rem" }}>Donation Details</h4>
+
+              <table className="receipt-table">
+                <tbody>
+                  <tr>
+                    <th>Donation Number:</th>
+                    <td>{
+                      receiptDetails.transactionId && receiptDetails.transactionId.startsWith("TXN")
+                        ? "L4C-" + receiptDetails.transactionId.substring(3)
+                        : receiptDetails.transactionId && !receiptDetails.transactionId.startsWith("L4C-")
+                        ? "L4C-" + receiptDetails.transactionId
+                        : receiptDetails.transactionId || "N/A"
+                    }</td>
+                  </tr>
+                  <tr>
+                    <th>Donation Date:</th>
+                    <td>{new Date(receiptDetails.donationDate).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }).replace(/\//g, "-")}</td>
+                  </tr>
+                  <tr>
+                    <th>Donation Status:</th>
+                    <td style={{ color: "green", fontWeight: "bold" }}>
+                      {receiptDetails.paymentStatus === "SUCCESS" ? "Paid" : receiptDetails.paymentStatus}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Received with thanks from:</th>
+                    <td>{receiptDetails.donorName}</td>
+                  </tr>
+                  <tr>
+                    <th>Address:</th>
+                    <td>{receiptDetails.donorAddress}</td>
+                  </tr>
+                  <tr>
+                    <th>E-mail:</th>
+                    <td>{receiptDetails.donorEmail}</td>
+                  </tr>
+                  <tr>
+                    <th>PAN No:</th>
+                    <td>{receiptDetails.panNo || "N/A"}</td>
+                  </tr>
+                  <tr>
+                    <th>Phone Number:</th>
+                    <td>{receiptDetails.donorPhone}</td>
+                  </tr>
+                  <tr>
+                    <th>Payment Mode:</th>
+                    <td>{receiptDetails.paymentMode || "ONLINE"}</td>
+                  </tr>
+                  <tr>
+                    <th>Reference Number:</th>
+                    <td>{receiptDetails.transactionId || "N/A"}</td>
+                  </tr>
+                  <tr>
+                    <th>Amount:</th>
+                    <td className="receipt-amount">INR {receiptDetails.amount}/-</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="receipt-footer-meta">
+                <span>For: Look4Child Foundation.</span>
+                <span>PAN: AAAAL4939Q</span>
+              </div>
+
+              <div className="receipt-office-footer">
+                Regd. Office: Room No.1, Opp. Sarpanch Anant House, Tigra Village, Sec-57, Gurgaon<br />
+                Phone: +91 98998 18585  |  Email: info@look4child.ngo  |  Web: www.look4child.ngo
+              </div>
+            </div>
+          ) : (
+            <div style={{ color: "var(--danger)", padding: "1.5rem", textAlign: "center" }}>
+              ⚠️ Failed to load receipt layout details.
+            </div>
+          )}
+
+          <div className="receipt-actions">
+            <a
+              href={`${import.meta.env.VITE_APP_URL || "http://localhost:5000"}/api/certificate/download-certificate/${successData.donationId}`}
+              className="btn btn-certificate-download"
+              target="_blank"
+              rel="noreferrer"
+            >
+              🖨️ Download Certificate
+            </a>
+            
+            <button
+              className="btn btn-secondary btn-new-donation-centered"
+              onClick={() => setSuccessData(null)}
+            >
+              Make Another Donation
+            </button>
+          </div>
         </div>
       </div>
     );
