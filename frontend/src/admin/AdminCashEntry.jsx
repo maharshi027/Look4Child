@@ -4,6 +4,7 @@ import axios from "axios";
 export default function AdminCashEntry({ onRecordAdded }) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [lastSaved, setLastSaved] = useState(null);
   const [cashRecord, setCashRecord] = useState({
     name: "",
     email: "",
@@ -26,13 +27,12 @@ export default function AdminCashEntry({ onRecordAdded }) {
       newErrors.email = "Invalid email format";
     if (!cashRecord.phone.trim()) newErrors.phone = "Phone is required";
     if (!cashRecord.address.trim()) newErrors.address = "Address is required";
-    if (!cashRecord.panNo.trim()) newErrors.panNo = "PAN is required";
-    if (!panRegex.test(cashRecord.panNo.toUpperCase()))
-      newErrors.panNo = "Invalid PAN format (e.g., ABCDE1234F)";
+    if (cashRecord.panNo.trim()) {
+      if (!panRegex.test(cashRecord.panNo.toUpperCase()))
+        newErrors.panNo = "Invalid PAN format (e.g., ABCDE1234F)";
+    }
     if (!cashRecord.amount || parseFloat(cashRecord.amount) <= 0)
       newErrors.amount = "Amount must be > 0";
-    if (cashRecord.gatewayName !== "CASH" && !cashRecord.referenceNumber.trim())
-      newErrors.referenceNumber = "Reference number is required for non-cash payment";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -62,17 +62,12 @@ export default function AdminCashEntry({ onRecordAdded }) {
           onRecordAdded();
         }
 
-        // Trigger PDF generation downloads
-        window.open(
-          `${import.meta.env.VITE_APP_URL}/api/receipt/download-receipt/${data.donationId}`,
-          "_blank"
-        );
-        setTimeout(() => {
-          window.open(
-            `${import.meta.env.VITE_APP_URL}/api/certificate/download-certificate/${data.donationId}`,
-            "_blank"
-          );
-        }, 600);
+        setLastSaved({
+          id: data.donationId,
+          name: cashRecord.name,
+          email: cashRecord.email,
+          amount: cashRecord.amount
+        });
 
         if (!keepValues) {
           // Clear form fully
@@ -116,6 +111,82 @@ export default function AdminCashEntry({ onRecordAdded }) {
 
   return (
     <div className="cms-cash-card compact-card fade-in">
+      {lastSaved && (
+        <div className="last-saved-banner fade-in" style={{
+          backgroundColor: "#F0FDF4",
+          border: "1px solid #BBF7D0",
+          borderRadius: "8px",
+          padding: "1rem",
+          marginBottom: "1.5rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "1rem"
+        }}>
+          <div>
+            <h4 style={{ margin: 0, color: "#166534", fontSize: "0.95rem" }}>
+              ✅ Donation Saved: <strong>{lastSaved.name}</strong> (₹{lastSaved.amount})
+            </h4>
+            <p style={{ margin: "2px 0 0 0", color: "#1E3A8A", fontSize: "0.8rem" }}>
+              Actions for this entry:
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <a
+              href={`${import.meta.env.VITE_APP_URL || "http://localhost:5000"}/api/receipt/download-receipt/${lastSaved.id}`}
+              className="action-btn-red"
+              style={{ textDecoration: "none", fontSize: "0.85rem", padding: "6px 12px", borderRadius: "4px" }}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Generate Receipt
+            </a>
+            <a
+              href={`${import.meta.env.VITE_APP_URL || "http://localhost:5000"}/api/certificate/download-certificate/${lastSaved.id}`}
+              className="action-btn-blue"
+              style={{ textDecoration: "none", fontSize: "0.85rem", padding: "6px 12px", borderRadius: "4px" }}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Generate Certificate
+            </a>
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const { data } = await axios.post(`/api/receipt/email-receipt/${lastSaved.id}`);
+                  if (data.success) {
+                    alert("📧 Receipt emailed successfully to donor!");
+                  }
+                } catch (err) {
+                  console.error(err);
+                  alert(err.response?.data?.message || "Failed to send email.");
+                }
+              }}
+              className="action-btn-green"
+              style={{ fontSize: "0.85rem", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", border: "none" }}
+            >
+              Send Email
+            </button>
+            <button
+              type="button"
+              onClick={() => setLastSaved(null)}
+              style={{
+                background: "none",
+                border: "none",
+                fontSize: "1.2rem",
+                color: "#9CA3AF",
+                cursor: "pointer",
+                padding: "0 5px"
+              }}
+              title="Close Banner"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
       <form onSubmit={(e) => { e.preventDefault(); saveRecord(false); }} className="compact-form">
         <div className="compact-grid">
           {/* Row 1 */}
@@ -184,7 +255,7 @@ export default function AdminCashEntry({ onRecordAdded }) {
             {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
           <div className="form-group">
-            <label>Pan No. <span className="required">*</span></label>
+            <label>Pan No.</label>
             <input
               type="text"
               name="panNo"
@@ -233,12 +304,12 @@ export default function AdminCashEntry({ onRecordAdded }) {
 
           {/* Row 5 */}
           <div className="form-group full-width">
-            <label>Reference Number {cashRecord.gatewayName !== "CASH" && <span className="required">*</span>}</label>
+            <label>Reference Number (Optional)</label>
             <input
               type="text"
               name="referenceNumber"
               className={`form-input compact-input ${errors.referenceNumber ? "input-error" : ""}`}
-              placeholder={cashRecord.gatewayName === "CASH" ? "Reference Number / Txn ID (Optional)" : "Reference Number / Txn ID"}
+              placeholder="Reference Number / Txn ID (Optional)"
               value={cashRecord.referenceNumber}
               onChange={handleInputChange}
             />

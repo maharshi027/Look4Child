@@ -30,9 +30,10 @@ export default function OnlineDonation() {
       newErrors.email = "Invalid email";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
     if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.panNo.trim()) newErrors.panNo = "PAN number is required";
-    if (!panRegex.test(formData.panNo.toUpperCase()))
-      newErrors.panNo = "Invalid PAN format";
+    if (formData.panNo.trim()) {
+      if (!panRegex.test(formData.panNo.toUpperCase()))
+        newErrors.panNo = "Invalid PAN format";
+    }
     if (!formData.amount || parseFloat(formData.amount) <= 0)
       newErrors.amount = "Amount must be > 0";
 
@@ -354,7 +355,7 @@ export default function OnlineDonation() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="donor-pan">PAN Number *</label>
+            <label htmlFor="donor-pan">PAN Number</label>
             <div className="input-icon-wrapper">
               <span className="input-icon">🪪</span>
               <input
@@ -372,7 +373,6 @@ export default function OnlineDonation() {
                     },
                   })
                 }
-                required
               />
             </div>
             {errors.panNo && <span className="error-text">{errors.panNo}</span>}

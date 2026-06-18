@@ -2,6 +2,7 @@ import PDFDocument from "pdfkit";
 import Donation from "../models/donation.models.js";
 import { fileURLToPath } from "url";
 import path from "path";
+import { getReceiptSerialNumber } from "./receipt.controller.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,11 +39,12 @@ export const downloadCertificate = async (req, res) => {
       });
     }
 
+    const cleanDonorName = donation.donorName.replace(/[^a-zA-Z0-9]/g, "_");
     // Set response headers to force download as a PDF
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=certificate_${donation._id}.pdf`,
+      `attachment; filename="Donation Certificate_${cleanDonorName}.pdf"`,
     );
 
     // Create a landscape A4 PDF document (841.89 x 595.28 points)
@@ -62,8 +64,9 @@ export const downloadCertificate = async (req, res) => {
     doc.image(certificateBgPath, 0, 0, { width, height });
 
     // --- TOP REFERENCE NUMBER ---
+    const serialNumber = await getReceiptSerialNumber(donation);
     doc.font("Times-Roman").fontSize(9.5).fillColor("#000000");
-    doc.text("45147/2025-26/L4C", 60, 52);
+    doc.text(serialNumber, 60, 52);
 
     // --- DONOR NAME ---
     doc.y = 230;

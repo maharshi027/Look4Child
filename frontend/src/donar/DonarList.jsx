@@ -21,14 +21,8 @@ export default function DonarList() {
     paymentStatus: "",
     address: "",
     panNo: "",
-    txnId: "",
-    user: "",
-    type: "",
-    gatewayName: "",
-    claimStatus: "",
-    orderId: "",
     date: "",
-    additionalInfo: "",
+    referenceNo: "",
   });
 
   const fetchDonations = async () => {
@@ -55,16 +49,10 @@ export default function DonarList() {
       amount: record.amount,
       paymentMode: record.paymentMode,
       paymentStatus: record.paymentStatus,
-      address: record.address || "",
+      address: record.donorAddress || "",
       panNo: record.panNo || "",
-      txnId: record.txnId || "",
-      user: record.user || "",
-      type: record.type || "",
-      gatewayName: record.gatewayName || "",
-      claimStatus: record.claimStatus || "",
-      orderId: record.orderId || "",
       date: record.date || "",
-      additionalInfo: record.additionalInfo || "",
+      referenceNo: record.referenceNo || "",
     });
   };
 
@@ -234,12 +222,12 @@ export default function DonarList() {
                       {d.donorPhone && (
                         <div className="donor-subinfo">📞 {d.donorPhone}</div>
                       )}
-                      {d.address && (
+                      {d.donorAddress && (
                         <div
                           className="donor-subinfo"
                           style={{ fontSize: "0.75rem" }}
                         >
-                          📍 {d.address.substring(0, 30)}...
+                          📍 {d.donorAddress.substring(0, 30)}...
                         </div>
                       )}
                     </td>
@@ -310,7 +298,14 @@ export default function DonarList() {
                             </button>
                           </>
                         )}
-                       
+                        <button
+                          onClick={() => handleEditClick(d)}
+                          className="action-btn action-btn-edit"
+                          style={{ color: "#3B82F6", marginLeft: "0.3rem" }}
+                          title="Edit Donor Record"
+                        >
+                          ✏️
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -470,43 +465,7 @@ export default function DonarList() {
                   }
                 />
               </div>
-              <div className="form-group">
-                <label>Payment Type</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={editForm.type}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, type: e.target.value })
-                  }
-                />
-              </div>
-              <div className="form-group">
-                <label>Gateway Name</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={editForm.gatewayName}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, gatewayName: e.target.value })
-                  }
-                />
-              </div>
-              <div className="form-group">
-                <label>Claim Status</label>
-                <select
-                  className="form-input"
-                  value={editForm.claimStatus}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, claimStatus: e.target.value })
-                  }
-                >
-                  <option value="">Select Status</option>
-                  <option value="PENDING">PENDING</option>
-                  <option value="APPROVED">APPROVED</option>
-                  <option value="REJECTED">REJECTED</option>
-                </select>
-              </div>
+              
               <div className="form-group">
                 <label>User Reference</label>
                 <input

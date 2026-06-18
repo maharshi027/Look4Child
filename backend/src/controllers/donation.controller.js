@@ -8,11 +8,11 @@ export const initiateOnline = async (req, res) => {
 
   try {
     // Validate required fields
-    if (!name || !email || !phone || !amount || !address || !panNo) {
+    if (!name || !email || !phone || !amount || !address) {
       return res.status(400).json({
         success: false,
         message:
-          "Name, email, phone, amount, address, and PAN number are required",
+          "Name, email, phone, amount, and address are required",
       });
     }
 
@@ -25,13 +25,15 @@ export const initiateOnline = async (req, res) => {
       });
     }
 
-    // Validate PAN format
-    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-    if (!panRegex.test(panNo.toUpperCase())) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid PAN format. Format should be: ABCDE1234F",
-      });
+    // Validate PAN format if provided
+    if (panNo && panNo.trim() !== "") {
+      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+      if (!panRegex.test(panNo.toUpperCase())) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid PAN format. Format should be: ABCDE1234F",
+        });
+      }
     }
 
     const keyId = process.env.RAZORPAY_KEY_ID;
@@ -76,7 +78,7 @@ export const initiateOnline = async (req, res) => {
       donorPhone: phone,
       amount: numericAmount,
       donorAddress: address,
-      panNo: panNo.toUpperCase(),
+      panNo: panNo ? panNo.toUpperCase() : "",
       donationDate: new Date(),
       paymentMode: "ONLINE",
       paymentStatus: "PENDING",
@@ -218,11 +220,11 @@ export const recordCash = async (req, res) => {
 
   try {
     // Validate required fields
-    if (!name || !email || !phone || !amount || !address || !panNo) {
+    if (!name || !email || !phone || !amount || !address) {
       return res.status(400).json({
         success: false,
         message:
-          "Name, email, phone, amount, address, and PAN number are required",
+          "Name, email, phone, amount, and address are required",
       });
     }
 
@@ -235,13 +237,15 @@ export const recordCash = async (req, res) => {
       });
     }
 
-    // Validate PAN format (basic validation)
-    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-    if (!panRegex.test(panNo.toUpperCase())) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid PAN format. Format should be: ABCDE1234F",
-      });
+    // Validate PAN format if provided
+    if (panNo && panNo.trim() !== "") {
+      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+      if (!panRegex.test(panNo.toUpperCase())) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid PAN format. Format should be: ABCDE1234F",
+        });
+      }
     }
 
     // Custom Transaction and Order ID if provided, otherwise generate them
@@ -254,7 +258,7 @@ export const recordCash = async (req, res) => {
       donorPhone: phone,
       amount: numericAmount,
       donorAddress: address,
-      panNo: panNo.toUpperCase(),
+      panNo: panNo ? panNo.toUpperCase() : "",
       donationDate: donationDate ? new Date(donationDate) : new Date(),
       paymentMode: paymentMode || "CASH",
       paymentStatus: paymentStatus || "SUCCESS",

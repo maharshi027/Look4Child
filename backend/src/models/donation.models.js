@@ -30,9 +30,9 @@ const donationSchema = new mongoose.Schema(
     },
     panNo: {
       type: String,
-      required: true,
       trim: true,
       uppercase: true,
+      default: "",
     },
     donationDate: {
       type: Date,
