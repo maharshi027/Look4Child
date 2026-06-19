@@ -92,5 +92,7 @@ const donationSchema = new mongoose.Schema(
   },
 );
 
+donationSchema.index({ createdAt: -1 });
+
 const Donation = mongoose.model("Donation", donationSchema);
 export default Donation;

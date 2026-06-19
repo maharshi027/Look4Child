@@ -52,8 +52,11 @@ export default function DonarList() {
       paymentStatus: record.paymentStatus,
       address: record.donorAddress || "",
       panNo: record.panNo || "",
-      date: record.date || "",
-      referenceNo: record.referenceNo || "",
+      txnId: record.transactionId || "",
+      orderId: record.razorpayOrderId || "",
+      user: record.user || "Admin",
+      date: record.donationDate ? new Date(record.donationDate).toISOString().substring(0, 10) : "",
+      additionalInfo: record.additionalInfo || "",
     });
   };
 

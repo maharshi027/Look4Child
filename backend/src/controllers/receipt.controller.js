@@ -332,6 +332,9 @@ const createTransporter = () => {
       user,
       pass,
     },
+    connectionTimeout: 10000, // 10 seconds timeout for establishing TCP connection
+    socketTimeout: 10000,     // 10 seconds idle timeout for socket
+    greetingTimeout: 10000,   // 10 seconds timeout for greeting response
   });
 };
 
