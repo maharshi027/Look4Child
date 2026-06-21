@@ -347,7 +347,7 @@ const getTransporter = () => {
 };
 
 // Generate and email the receipt to the donor using beautiful HTML format
-export const sendHtmlReceiptEmailInternal = async (donation) => {
+export const sendHtmlReceiptEmailInternal = async (donation, customBackendUrl) => {
   const serialNumber = await getReceiptSerialNumber(donation);
   const receiptDateStr = getReceiptDateStr(donation.donationDate);
   const tableDateStr = getTableDateStr(donation.donationDate);
@@ -358,7 +358,7 @@ export const sendHtmlReceiptEmailInternal = async (donation) => {
 
   const paymentMode = (donation.gatewayName || donation.paymentMode || "CASH").toUpperCase();
   const transporter = getTransporter();
-  const backendUrl = process.env.BACKEND_URL || "https://dream-girl-foundation.onrender.com";
+  const backendUrl = customBackendUrl || process.env.BACKEND_URL || "https://dream-girl-foundation.onrender.com";
 
   const htmlContent = `
 <div style="font-family: 'Times New Roman', Times, serif; color: #333333; margin: 0; padding: 20px; background-color: #f9f9f9;">
@@ -541,7 +541,12 @@ export const emailTransactionReceipt = async (req, res) => {
       });
     }
 
-    await sendHtmlReceiptEmailInternal(donation);
+    // Resolve current request origin dynamically to build correct email links
+    const protocol = req.protocol;
+    const host = req.get("host");
+    const dynamicBackendUrl = `${protocol}://${host}`;
+
+    await sendHtmlReceiptEmailInternal(donation, dynamicBackendUrl);
 
     res.status(200).json({
       success: true,

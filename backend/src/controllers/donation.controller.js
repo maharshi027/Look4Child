@@ -138,10 +138,15 @@ export const verifyOnline = async (req, res) => {
       donation.razorpaySignature = razorpay_signature || "mock_signature";
       await donation.save();
 
+      // Resolve dynamic backend URL from request to generate correct email links
+      const protocol = req.protocol;
+      const host = req.get("host");
+      const dynamicBackendUrl = `${protocol}://${host}`;
+
       // Send email in the background with a 2-second delay so it does not block/queue up
       // against the immediate frontend receipt details and certificate download requests.
       setTimeout(() => {
-        sendHtmlReceiptEmailInternal(donation).catch((emailError) => {
+        sendHtmlReceiptEmailInternal(donation, dynamicBackendUrl).catch((emailError) => {
           console.error("Auto-email receipt failed in background for simulated donation:", emailError);
         });
       }, 2000);
@@ -177,10 +182,15 @@ export const verifyOnline = async (req, res) => {
       donation.razorpaySignature = razorpay_signature;
       await donation.save();
 
+      // Resolve dynamic backend URL from request to generate correct email links
+      const protocol = req.protocol;
+      const host = req.get("host");
+      const dynamicBackendUrl = `${protocol}://${host}`;
+
       // Send email in the background with a 2-second delay so it does not block/queue up
       // against the immediate frontend receipt details and certificate download requests.
       setTimeout(() => {
-        sendHtmlReceiptEmailInternal(donation).catch((emailError) => {
+        sendHtmlReceiptEmailInternal(donation, dynamicBackendUrl).catch((emailError) => {
           console.error("Auto-email receipt failed in background for verified donation:", emailError);
         });
       }, 2000);

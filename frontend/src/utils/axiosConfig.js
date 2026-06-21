@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Set base URL from environment variable
 axios.defaults.baseURL =
-  import.meta.env.VITE_APP_URL || "http://localhost:5000";
+  import.meta.env.VITE_APP_URL || "https://dream-girl-foundation.onrender.com";
 
 export const setupAxiosInterceptors = () => {
   // Request interceptor: Add JWT token to all requests

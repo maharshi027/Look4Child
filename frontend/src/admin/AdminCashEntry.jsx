@@ -166,7 +166,9 @@ export default function AdminCashEntry({ onRecordAdded }) {
                   }
                 } catch (err) {
                   console.error(err);
-                  alert(err.response?.data?.message || "Failed to send email.");
+                  const errMsg = err.response?.data?.message || "Failed to send email.";
+                  const errDetails = err.response?.data?.error ? `\nDetails: ${err.response.data.error}` : "";
+                  alert(`${errMsg}${errDetails}`);
                 }
               }}
               className="action-btn-green"
