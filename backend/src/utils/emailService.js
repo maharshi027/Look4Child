@@ -24,6 +24,7 @@ const getTransporter = () => {
       host,
       port,
       secure: isSecure,
+      family: 4, // Force IPv4 to bypass Render's unsupported IPv6 network routing
       pool: true, // Use connection pool
       maxConnections: 5,
       maxMessages: 100,
@@ -39,9 +40,7 @@ const getTransporter = () => {
   return cachedTransporter;
 };
 
-/**
- * Builds the standard beautiful HTML template for donation emails.
- */
+
 const buildEmailHtml = (donation, donationNumber, receiptDateStr, tableDateStr, donationStatus, paymentMode, backendUrl) => {
   return `
 <div style="font-family: 'Times New Roman', Times, serif; color: #333333; margin: 0; padding: 20px; background-color: #f9f9f9;">
