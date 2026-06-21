@@ -61,7 +61,7 @@ export const generateCertificatePDF = async (doc, donation) => {
     donation.paymentMode === "CASH"
       ? (donation.gatewayName || "CASH").toUpperCase()
       : (donation.gatewayName || "NEFT/IMPS").toUpperCase();
-  doc.text(paymentModeLabel, 512, 349, { lineBreak: false });
+  doc.text(paymentModeLabel, 480, 349, { lineBreak: false, width: 160 });
 
   // Row 3 — "no. ___ drawn ___ dated ___"
   doc.text(serialNumber, 155, 380, { lineBreak: false });
