@@ -238,8 +238,9 @@ export default function AdminCashEntry({ onRecordAdded }) {
           <div className="form-group">
             <label>Mobile Number <span className="required">*</span></label>
             <input
-              type="text"
+              type="number"
               name="phone"
+              maxlength="10"
               className={`form-input compact-input ${errors.phone ? "input-error" : ""}`}
               placeholder="Mobile Number"
               value={cashRecord.phone}
