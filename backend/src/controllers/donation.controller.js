@@ -1,7 +1,8 @@
 import Donation from "../models/donation.models.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
-import { sendHtmlReceiptEmailInternal, getReceiptSerialNumber } from "./receipt.controller.js";
+import { getReceiptSerialNumber } from "./receipt.controller.js";
+import { sendOnlineDonationEmail } from "../utils/emailService.js";
 
 // Initiate an online donation order
 export const initiateOnline = async (req, res) => {
@@ -146,7 +147,7 @@ export const verifyOnline = async (req, res) => {
       // Send email in the background with a 2-second delay so it does not block/queue up
       // against the immediate frontend receipt details and certificate download requests.
       setTimeout(() => {
-        sendHtmlReceiptEmailInternal(donation, dynamicBackendUrl).catch((emailError) => {
+        sendOnlineDonationEmail(donation, dynamicBackendUrl).catch((emailError) => {
           console.error("Auto-email receipt failed in background for simulated donation:", emailError);
         });
       }, 2000);
@@ -190,7 +191,7 @@ export const verifyOnline = async (req, res) => {
       // Send email in the background with a 2-second delay so it does not block/queue up
       // against the immediate frontend receipt details and certificate download requests.
       setTimeout(() => {
-        sendHtmlReceiptEmailInternal(donation, dynamicBackendUrl).catch((emailError) => {
+        sendOnlineDonationEmail(donation, dynamicBackendUrl).catch((emailError) => {
           console.error("Auto-email receipt failed in background for verified donation:", emailError);
         });
       }, 2000);
