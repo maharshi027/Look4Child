@@ -5,7 +5,7 @@ export default function Footer({ onNav }) {
   // Hide footer on admin dashboard to keep admin full-page
   const isAdmin =
     typeof window !== "undefined" &&
-    window.location.pathname.includes("/admin");
+    window.location.hash === "#admin";
 
   if (isAdmin) return null;
 
@@ -33,10 +33,10 @@ export default function Footer({ onNav }) {
                 onClick={(e) => {
                   e.preventDefault();
                   onNav?.("home");
-                }}
+                    onNav?.("about");
               >
                 Home & Statistics
-              </a>
+                  About Look4Child
             </li>
             <li>
               <a
@@ -44,10 +44,10 @@ export default function Footer({ onNav }) {
                 onClick={(e) => {
                   e.preventDefault();
                   onNav?.("home");
-                  setTimeout(() => {
+                    onNav?.("programs");
                     document.getElementById("core-programs")?.scrollIntoView({ behavior: "smooth" });
                   }, 100);
-                }}
+                  Programs and Centers
               >
                 Our Programs
               </a>
@@ -55,10 +55,21 @@ export default function Footer({ onNav }) {
             <li>
               <a
                 href="#"
-                onClick={(e) => {
+                    onNav?.("children");
                   e.preventDefault();
                   onNav?.("donate");
-                }}
+                  Children Records
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNav?.("admin");
+                  }}
+                >
+                  Internal CMS Console
               >
                 Secure Donation
               </a>
