@@ -1,6 +1,16 @@
 # Dream Girl Foundation
 
+<<<<<<< HEAD
 An NGO platform dedicated to protecting children and providing educational knowledge to help underprivileged girls. This application includes donation management, payment integration, and certificate generation.
+=======
+<p align="center">
+  <img src="./frontend/src/assets/logo.png" alt="Look4Child Foundation Logo" width="220" />
+</p>
+
+Look4Child Foundation is a registered NGO dedicated to child protection, supporting girls' education, empowering students, and extending care to needy and underprivileged families. This full-stack web application enables transparent donation processing, secure admin management, employee record tracking, and automated receipt and certificate generation to support our social transformation initiatives.
+
+---
+>>>>>>> fix-Readme
 
 ## 📋 Table of Contents
 
@@ -24,6 +34,7 @@ An NGO platform dedicated to protecting children and providing educational knowl
 ## 🎯 Overview
 
 The **Look4Child Foundation** platform acts as a secure bridge between our supporters and the communities we serve. Our organization works tirelessly to address barriers in:
+
 - 👧 **Girls' Education**: Nurturing confidence, literacy, and future careers for young women.
 - 📚 **Student Empowerment**: Distributing school kits, coaching resources, and digital literacy.
 - 🧸 **Children's Protection**: Offering safe spaces, healthcare camps, and nutritious mid-day meals.
@@ -36,16 +47,17 @@ The **Look4Child Foundation** platform acts as a secure bridge between our suppo
 Our platform offers a complete suite of services designed to make donating and managing contributions effortless and transparent:
 
 1. **Secure Online Contributions**: Integrated payment processing for instant and safe transactions.
-2. **Transparent Donation Metrics**: Live tracker for public/admin visibility into donor records.
+2. **Transparent Record Metrics**: Live tracker for admin visibility into employee records and logged entries.
 3. **80G Tax Exemption**: Registered under Section 80G of the Income Tax Act, offering instant benefits.
 4. **Automated Receipts & Certificates**: Downloadable PDF transaction receipts and official certificates generated on successful donation.
-5. **Internal CMS Console**: A secure administrative panel for records tracking, cash entry validation, and database updates.
+5. **Internal CMS Console**: A secure administrative panel with a collapsible sidebar, employee record table, and cash entry validation.
 
 ---
 
 ## 🛠 Tech Stack
 
 ### Backend
+
 - **Runtime**: Node.js
 - **Framework**: Express.js
 - **Database**: MongoDB
@@ -54,6 +66,7 @@ Our platform offers a complete suite of services designed to make donating and m
 - **File Management**: Multer
 
 ### Frontend
+
 - **Build Tool**: Vite
 - **Framework**: React.js
 - **Styling**: Modern Vanilla CSS Design System (supporting responsive layout and animations)
@@ -97,6 +110,7 @@ Look4Child/
 │   │   │   ├── AdminDashboard.jsx    # Admin dashboard panel
 │   │   │   └── AdminCashEntry.jsx    # Offline transaction record form
 │   │   ├── donar/
+<<<<<<< HEAD
 │   │   │   └── DonarList.jsx         # Donor records list
 │   │   ├── assets/                   # Static assets
 │   │   ├── App.jsx                   # JWT initialization
@@ -110,19 +124,39 @@ Look4Child/
 ├── .gitignore                        # Root-level git ignore
 ├── SETUP_COMPLETE.md                 # Complete setup guide
 └── README.md                         # This file
+=======
+│   │   │   └── DonarList.jsx         # Employee records grid
+│   │   ├── App.jsx                   # Primary router & view controller
+│   │   └── index.css                 # Premium custom design system styles
+│   ├── index.html                    # Single-page index file
+│   └── vite.config.js                # Vite development proxy
+└── README.md                         # Project documentation
+>>>>>>> fix-Readme
 ```
 
 ## 🚀 Installation
 
 ### 1. Clone the Repository
 
+<<<<<<< HEAD
+=======
+### Prerequisites
+
+- **Node.js** (v16 or higher)
+- **MongoDB** (Local instance or Atlas cloud cluster)
+
+### 1. Repository Setup
+
+>>>>>>> fix-Readme
 ```bash
 git clone <repository-url>
 cd "Dream Girl Foundation"
 ```
 
 ### 2. Dependency Installation
+
 Run in both directories:
+
 ```bash
 # For backend
 cd backend
@@ -133,6 +167,7 @@ cd ../frontend
 npm install
 ```
 
+<<<<<<< HEAD
 ## ⚙️ Environment Setup
 
 ### Backend Environment Variables
@@ -184,6 +219,9 @@ RAZORPAY_KEY_SECRET=your_razorpay_key_secret_here
 ## 🏃 Running the Project
 
 ### Backend Server
+=======
+### 3. Execution
+>>>>>>> fix-Readme
 
 ```bash
 # Start backend API (typically runs on port 5000)
@@ -212,8 +250,12 @@ npm run dev
 # Build for production
 npm run build
 
+<<<<<<< HEAD
 # Preview production build
 npm run preview
+=======
+_Note: Environment variables contain secrets and credentials; they should remain private and never be shared, publicized, or checked into repository version history._
+>>>>>>> fix-Readme
 
 # Frontend will typically run on http://localhost:5173
 ```
@@ -341,6 +383,7 @@ curl -X GET http://localhost:5000/api/donations/all-records \
 - **Double-Token Auth**: Clean JWT validation using access tokens (15-minute life) and refresh tokens (7-day life) with automated refresh requests.
 - **PDF Compilation**: Direct compilation of vectors and images using PDFKit to generate standard portrait receipts (single A4 page) and landscape certificates.
 - **Custom Design Tokens**: Curated layout styling using dynamic HSL color variables, smooth micro-interactions, and glassmorphism cards.
+<<<<<<< HEAD
 =======
 - ✅ **JWT Authentication**: Secure token-based authentication with automatic refresh
 - ✅ **Access Control**: Separate access tokens (15m) and refresh tokens (7d)
@@ -475,12 +518,16 @@ This project is licensed under the ISC License.
 
 For questions or support, please contact the development team or create an issue in the repository.
 >>>>>>> 4c5ffdaf6d76bbf731f92d6492f1cf28a8cc22e5
+=======
+- **Collapsible Admin Sidebar**: The admin CMS keeps menu icons visible in compact mode while hiding labels and preserving the employee records workspace.
+>>>>>>> fix-Readme
 
 ---
 
 ## 📞 Support & NGO Contacts
 
 For organization information or donation inquiries:
+
 - **Office**: Room No.1, Opp. Sarpanch Anant House, Tigra Village, Sec-57, Gurgaon
 - **Email**: info@look4child.ngo
 - **Phone**: +91 98998 18585

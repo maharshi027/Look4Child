@@ -41,6 +41,27 @@ export default function DonarList() {
   useEffect(() => {
     fetchDonations();
   }, []);
+<<<<<<< HEAD
+=======
+
+  const handleDelete = async (id) => {
+    if (
+      window.confirm(
+        "Are you sure you want to permanently delete this donor record?",
+      )
+    ) {
+      try {
+        await axios.delete(`/api/donations/delete/${id}`);
+        alert("Record deleted successfully.");
+        fetchDonations();
+      } catch (err) {
+        console.error(err);
+        alert("Failed to delete record.");
+      }
+    }
+  };
+
+>>>>>>> fix-Readme
   const handleEditClick = (record) => {
     setEditingRecord(record);
     setEditForm({
@@ -130,20 +151,90 @@ export default function DonarList() {
         className="cms-loading"
         style={{ textAlign: "center", padding: "3rem" }}
       >
+<<<<<<< HEAD
         Loading Donor Records Database...
+=======
+        Loading Employee Records Database...
+>>>>>>> fix-Readme
       </div>
     );
   }
 
   return (
     <div className="cms-container fade-in">
+<<<<<<< HEAD
+=======
+      {/* Metrics Section */}
+      <div className="cms-metrics">
+        <div className="metric-card">
+          <div
+            className="metric-icon-bg"
+            style={{ backgroundColor: "#ecfdf5", color: "#059669" }}
+          >
+            🪙
+          </div>
+          <div className="metric-details">
+            <p>Total Raised</p>
+            <h3>
+              {new Intl.NumberFormat("en-IN", {
+                style: "currency",
+                currency: "INR",
+                maximumFractionDigits: 0,
+              }).format(totalRaised)}
+            </h3>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div
+            className="metric-icon-bg"
+            style={{ backgroundColor: "#eff6ff", color: "#2563eb" }}
+          >
+            👥
+          </div>
+          <div className="metric-details">
+            <p>Active Employees</p>
+            <h3>{numDonors}</h3>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div
+            className="metric-icon-bg"
+            style={{ backgroundColor: "#fef3c7", color: "#d97706" }}
+          >
+            📈
+          </div>
+          <div className="metric-details">
+            <p>Average Ticket</p>
+            <h3>₹{averageDonation}</h3>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div
+            className="metric-icon-bg"
+            style={{ backgroundColor: "#fdf2f8", color: "#db2777" }}
+          >
+            📊
+          </div>
+          <div className="metric-details">
+            <p>Online vs Cash</p>
+            <h3 style={{ fontSize: "1.1rem" }}>
+              ₹{onlineTotal} / ₹{cashTotal}
+            </h3>
+          </div>
+        </div>
+      </div>
+
+>>>>>>> fix-Readme
       {/* Main Database Table Panel */}
       <div className="cms-records-panel">
         <div className="cms-toolbar">
           <div className="cms-search-wrapper">
             <input
               type="text"
-              placeholder="Search donor name, email or contact..."
+              placeholder="Search employee name, email or contact..."
               className="form-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -199,7 +290,11 @@ export default function DonarList() {
           {filteredDonations.length === 0 ? (
             <div className="cms-empty-state">
               <div className="cms-empty-icon">📁</div>
+<<<<<<< HEAD
               <h3>No donor records match your parameters</h3>
+=======
+              <h3>No employee records match your parameters</h3>
+>>>>>>> fix-Readme
               <p>
                 Try refining your search or log a cash entry on the right pane.
               </p>
@@ -208,11 +303,19 @@ export default function DonarList() {
             <table className="cms-table">
               <thead>
                 <tr>
+<<<<<<< HEAD
                   <th>Donor Profile</th>
                   <th>Contact & Address</th>
                   <th>Amount & Date</th>
                   <th>Payment Details</th>
                   <th>Actions</th>
+=======
+                  <th>Employee Profile</th>
+                  <th>Contribution</th>
+                  <th>Payment Type</th>
+                  <th>Log Status</th>
+                  <th>Action Logs</th>
+>>>>>>> fix-Readme
                 </tr>
               </thead>
               <tbody>
@@ -221,6 +324,7 @@ export default function DonarList() {
                     <td>
                       <div className="donor-name-cell">{d.donorName}</div>
                       <div className="donor-subinfo">{d.donorEmail}</div>
+<<<<<<< HEAD
                     </td>
                     <td>
                       {d.donorPhone && (
@@ -232,6 +336,14 @@ export default function DonarList() {
                           style={{ fontSize: "0.75rem" }}
                         >
                           📍 {d.donorAddress.substring(0, 30)}...
+=======
+                      {d.donorPhone && (
+                        <div
+                          className="donor-subinfo"
+                          style={{ fontSize: "0.7rem" }}
+                        >
+                          📞 {d.donorPhone}
+>>>>>>> fix-Readme
                         </div>
                       )}
                     </td>
@@ -241,8 +353,16 @@ export default function DonarList() {
                         className="donor-subinfo"
                         style={{ fontSize: "0.75rem" }}
                       >
+<<<<<<< HEAD
                         {d.date ||
                           new Date(d.createdAt).toLocaleDateString("en-IN")}
+=======
+                        {new Date(d.createdAt).toLocaleDateString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+>>>>>>> fix-Readme
                       </div>
                     </td>
                     <td>
@@ -251,10 +371,17 @@ export default function DonarList() {
                       >
                         {d.paymentMode === "CASH" ? "💵 Cash" : "🌐 Online"}
                       </span>
+<<<<<<< HEAD
                       <br />
                       <span
                         className={`badge badge-${d.paymentStatus.toLowerCase()}`}
                         style={{ marginTop: "0.3rem" }}
+=======
+                    </td>
+                    <td>
+                      <span
+                        className={`badge badge-${d.paymentStatus.toLowerCase()}`}
+>>>>>>> fix-Readme
                       >
                         {d.paymentStatus}
                       </span>
@@ -287,6 +414,7 @@ export default function DonarList() {
                             </button>
                           </>
                         ) : (
+<<<<<<< HEAD
                           <>
                             <button
                               className="action-btn"
@@ -305,6 +433,15 @@ export default function DonarList() {
                               🖨️
                             </button>
                           </>
+=======
+                          <button
+                            className="action-btn"
+                            style={{ opacity: 0.3, cursor: "not-allowed" }}
+                            disabled
+                          >
+                            🖨️
+                          </button>
+>>>>>>> fix-Readme
                         )}
                         <button
                           onClick={() => handleEditClick(d)}
