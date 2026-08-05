@@ -33,21 +33,30 @@ export default function Footer({ onNav }) {
                 onClick={(e) => {
                   e.preventDefault();
                   onNav?.("home");
-                    onNav?.("about");
+                }}
               >
-                Home & Statistics
-                  About Look4Child
+                Home &amp; Statistics
+              </a>
             </li>
             <li>
               <a
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  onNav?.("home");
-                    onNav?.("programs");
-                    document.getElementById("core-programs")?.scrollIntoView({ behavior: "smooth" });
-                  }, 100);
-                  Programs and Centers
+                  onNav?.("about");
+                }}
+              >
+                About Look4Child
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNav?.("programs");
+                  document.getElementById("core-programs")?.scrollIntoView({ behavior: "smooth" });
+                }}
               >
                 Our Programs
               </a>
@@ -55,21 +64,21 @@ export default function Footer({ onNav }) {
             <li>
               <a
                 href="#"
-                    onNav?.("children");
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNav?.("children");
+                }}
+              >
+                Children Records
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                onClick={(e) => {
                   e.preventDefault();
                   onNav?.("donate");
-                  Children Records
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onNav?.("admin");
-                  }}
-                >
-                  Internal CMS Console
+                }}
               >
                 Secure Donation
               </a>
